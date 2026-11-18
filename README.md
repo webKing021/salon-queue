@@ -1,7 +1,7 @@
 # Salon Queue Management System
 
 **Live demo:** _coming soon (will be deployed on Vercel)_
-**Hosted on:** Vercel (frontend) + Firebase Firestore (live data)
+**Hosted on:** Vercel (frontend + serverless API) + Neon Postgres via Vercel Storage
 **Staff PIN (Reception / Barber / Admin):** `1234`
 
 ## About
@@ -31,7 +31,7 @@ Built as a vibe coding project for IT603 – Intro to Programming (MSc IT, Sem 1
 - [prompts.md](prompts.md) — every prompt used, in order
 
 ## Tech stack
-React + Vite + Tailwind CSS · Firebase Firestore · Vercel
+React + Vite + Tailwind CSS · Vercel serverless functions (`/api`) · Neon Postgres (Vercel Storage)
 
 ## Run locally
 _Setup steps will be added after the project is created._
