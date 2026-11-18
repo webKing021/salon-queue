@@ -1,6 +1,6 @@
 # Salon Queue Management System
 
-**Live demo:** _coming soon (will be deployed on Vercel)_
+**Live demo:** https://salon-queue-krutarth078.vercel.app
 **Hosted on:** Vercel (frontend + serverless API) + Neon Postgres via Vercel Storage
 **Staff PIN (Reception / Barber / Admin):** `1234`
 
