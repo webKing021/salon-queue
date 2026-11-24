@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { useLang, useNames } from '../i18n/index.jsx';
 import { useQueue } from '../lib/useQueue.js';
 import { getMySpot } from '../lib/api.js';
-import { barberState, isActive, queueSummary } from '../lib/queueRules.js';
-import { Dot, Loading, OfflineBar, PhoneBar, fmtTime } from '../components/ui.jsx';
+import { STATUS, barberState, currentOf, isActive, queueSummary, spotEta } from '../lib/queueRules.js';
+import { Avatar, CustomerShell, Icon, Loading, OfflineBar, STATE_TEXT, fmtTime } from '../components/ui.jsx';
 
 export default function Home() {
   const { t } = useLang();
@@ -11,12 +11,28 @@ export default function Home() {
   const saved = getMySpot();
   const { state, offline, serverNow } = useQueue({ spotId: saved });
 
-  if (!state) return <Page><OfflineBar offline={offline} /><Loading /></Page>;
+  const staffBtn = (
+    <Link to="/staff" className="flex h-11 items-center gap-1.5 rounded-full border border-line-strong px-3.5 text-[13px] font-bold text-mute hover:border-gold/50 hover:text-ivory">
+      <Icon.Lock width={15} height={15} />
+      {t('staffBtn')}
+    </Link>
+  );
 
-  const { settings, barbers, spots, mine } = state;
+  if (!state) {
+    return (
+      <CustomerShell right={staffBtn}>
+        <OfflineBar offline={offline} />
+        <Loading />
+      </CustomerShell>
+    );
+  }
+
+  const now = serverNow();
+  const { settings, barbers, spots, services, mine } = state;
   const onDuty = barbers.filter((b) => b.onDuty);
-  const summary = queueSummary(spots, barbers, serverNow());
-  const hasActive = mine && isActive(mine);
+  const summary = queueSummary(spots, barbers, now);
+  const active = mine && isActive(mine) ? mine : null;
+  const myEta = active && active.status === STATUS.WAITING ? spotEta(active, spots, barbers, now) : null;
 
   const closedMsg = {
     switchedOff: t('onlineClosedMsg'),
@@ -25,118 +41,166 @@ export default function Home() {
   }[settings.reason];
 
   return (
-    <Page>
+    <CustomerShell right={staffBtn}>
       <OfflineBar offline={offline} />
-      <PhoneBar />
 
-      <section className="pt-4 pb-7">
-        <p className="eyebrow mb-3">{t('tagline')}</p>
-        <h1 className="font-display text-[42px] font-medium leading-[1.02] tracking-tight">{t('salonName')}</h1>
-        <div className="rule-double mt-5 mb-4 w-16" />
-        <span
-          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[13px] font-semibold ${
-            settings.isOpen ? 'bg-mint/12 text-mint' : 'bg-white/5 text-mute'
-          }`}
-        >
-          <span className={`h-1.5 w-1.5 rounded-full ${settings.isOpen ? 'bg-mint' : 'bg-mute'}`} />
+      {/* Salon */}
+      <section className="pt-5 pb-6">
+        <p className="eyebrow mb-2">{t('tagline')}</p>
+        <h1 className="font-display text-[40px] leading-[1.02] font-medium tracking-tight">{t('salonName')}</h1>
+        <p className={`mt-3 inline-flex items-center gap-2 text-[14px] font-semibold ${settings.isOpen ? 'text-mint' : 'text-mute'}`}>
+          <span className={`h-2 w-2 rounded-full ${settings.isOpen ? 'bg-mint' : 'bg-mute'}`} />
           {settings.isOpen
             ? t('openUntil', { time: fmtTime(settings.closeTime) })
             : t('closedNow', { time: fmtTime(settings.openTime) })}
-        </span>
+        </p>
       </section>
 
-      <section className="card mb-4 overflow-hidden">
-        <div className="flex items-center gap-2 border-b border-line px-5 py-3">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+      {/* My ticket (if this phone is in the queue) */}
+      {active && (
+        <Link to={`/status/${active.id}`} className="ticket animate-rise mb-5 block overflow-hidden" style={{ '--notch': 'var(--color-coal)' }}>
+          <div className="flex items-center gap-4 px-5 pt-4 pb-3.5">
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] font-bold tracking-[0.14em] text-ink-soft uppercase">{t('yourTicket')}</p>
+              <p className="mt-1 text-[15px] font-semibold">
+                {active.status === STATUS.CALLED
+                  ? t('yourTurn')
+                  : myEta.position === 1
+                    ? t('youAreNext')
+                    : `${t('inLine', { n: myEta.position })} · ${t('aboutMin', { n: myEta.wait })}`}
+              </p>
+            </div>
+            <p className="token text-[52px] text-ink">S-{active.token}</p>
+          </div>
+          <div className="perf" />
+          <p className="flex items-center justify-between px-5 py-3 text-[14px] font-bold text-ink">
+            {t('openTicket')} <Icon.Arrow />
+          </p>
+        </Link>
+      )}
+
+      {/* Live queue board */}
+      <section className="card mb-5 overflow-hidden">
+        <div className="flex items-center justify-between border-b border-line px-5 py-3">
+          <span className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+            </span>
+            <span className="eyebrow">{t('queueNow')}</span>
           </span>
-          <span className="eyebrow">{t('liveNow')}</span>
+          <span className="text-[12px] text-faint">{t('liveShort')}</span>
         </div>
-        <div className="px-5 py-5">
-          {summary.waiting === 0 ? (
-            <p className="font-display text-2xl leading-snug">{t('nobodyWaiting')}</p>
+
+        {summary.waiting === 0 ? (
+          <p className="px-5 py-6 font-display text-[24px] leading-snug">{t('nobodyWaiting')}</p>
+        ) : (
+          <div className="grid grid-cols-2 divide-x divide-line">
+            <div className="px-5 py-5">
+              <p className="token text-[64px] text-gold">{summary.waiting}</p>
+              <p className="mt-2 text-[14px] text-mute">{t('peopleWaiting', { n: summary.waiting })}</p>
+            </div>
+            <div className="px-5 py-5">
+              <p className="token text-[64px]">
+                {summary.wait}
+                <span className="ml-1 font-sans text-[15px] font-semibold tracking-normal text-mute">{t('ringMin')}</span>
+              </p>
+              <p className="mt-2 text-[14px] text-mute">{t('ringAbout')}</p>
+            </div>
+          </div>
+        )}
+
+        {onDuty.length > 0 && (
+          <div className="border-t border-line px-5 pt-3 pb-2">
+            <p className="eyebrow mb-1">{t('nowServingTitle')}</p>
+            <ul className="divide-y divide-line">
+              {onDuty.map((b) => {
+                const st = barberState(b, spots);
+                const cur = currentOf(b.id, spots);
+                return (
+                  <li key={b.id} className="flex min-h-14 items-center gap-3">
+                    <Avatar barber={b} size={34} />
+                    <span className="flex-1 text-[15px] font-semibold">{names.barber(b)}</span>
+                    {cur ? (
+                      <span className="token text-[28px] text-gold-soft">S-{cur.token}</span>
+                    ) : (
+                      <span className={`text-[14px] font-semibold ${STATE_TEXT[st]}`}>{t(`st_${st}`)}</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </section>
+
+      {/* Main action */}
+      {!active && (
+        <section className="mb-8">
+          {settings.onlineOpen ? (
+            <Link to="/join" className="btn-gold min-h-[68px] w-full flex-col gap-0.5 rounded-2xl text-[18px]">
+              <span className="flex items-center gap-2">
+                {t('joinQueue')} <Icon.Arrow />
+              </span>
+              <span className="text-[13px] font-semibold opacity-75">
+                {summary.waiting === 0 ? t('joinSubNow') : t('joinSub', { n: summary.wait })}
+              </span>
+            </Link>
           ) : (
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <p className="token text-6xl leading-none text-gold">{summary.waiting}</p>
-                <p className="mt-2 text-[15px] text-mute">{t('peopleWaiting', { n: summary.waiting })}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[13px] text-mute">{t('ringAbout')}</p>
-                <p className="mt-1 font-display text-3xl leading-none">
-                  {summary.wait} <span className="text-base text-mute">{t('ringMin')}</span>
-                </p>
-              </div>
+            <div className="rounded-2xl border border-line-strong px-5 py-5 text-center">
+              <p className="text-[16px] font-semibold">{closedMsg}</p>
             </div>
           )}
-        </div>
-      </section>
-
-      {onDuty.length > 0 && (
-        <section className="mb-8">
-          <p className="eyebrow mb-3">{t('barbersToday')}</p>
-          <ul className="flex flex-wrap gap-2">
-            {onDuty.map((b) => {
-              const st = barberState(b, spots);
-              return (
-                <li key={b.id} className="flex items-center gap-2 rounded-full border border-line bg-coal-deep py-2 pr-4 pl-3 text-[15px]">
-                  <Dot state={st} />
-                  <span className="font-semibold">{names.barber(b)}</span>
-                  <span className="text-mute">· {t(`st_${st}`)}</span>
-                </li>
-              );
-            })}
-          </ul>
+          {saved && mine && (
+            <Link to={`/status/${saved}`} className="mt-2 flex min-h-11 items-center justify-center text-[14px] text-mute underline decoration-line-strong underline-offset-4 hover:text-ivory">
+              {t('alreadyIn')}
+            </Link>
+          )}
         </section>
       )}
 
-      <section className="mb-4">
-        {hasActive ? (
-          <Link to={`/status/${mine.id}`} className="btn-gold min-h-14 w-full text-[17px]">
-            {t('viewMySpot')} · <span className="token">S-{mine.token}</span>
-          </Link>
-        ) : settings.onlineOpen ? (
-          <Link to="/join" className="btn-gold min-h-14 w-full text-[17px]">
-            {t('joinQueue')}
-          </Link>
-        ) : (
-          <>
-            <button className="btn-gold min-h-14 w-full text-[17px]" disabled>
-              {t('joinQueue')}
-            </button>
-            <p className="mt-3 rounded-xl border border-line bg-coal-deep px-4 py-3 text-center text-[15px] text-mute">{closedMsg}</p>
-          </>
-        )}
-        {saved && mine && !hasActive && (
-          <Link to={`/status/${saved}`} className="mt-3 block py-2 text-center text-sm text-mute underline decoration-line-strong underline-offset-4 hover:text-ivory">
-            {t('alreadyIn')}
-          </Link>
-        )}
+      {/* How it works */}
+      <section className="mb-8">
+        <h2 className="mb-3 text-[17px] font-bold">{t('howTitle')}</h2>
+        <ol className="space-y-3">
+          {[t('how1'), t('how2'), t('how3')].map((line, i) => (
+            <li key={i} className="flex gap-3.5">
+              <span className="token grid h-8 w-8 shrink-0 place-items-center rounded-full border border-gold/40 text-[18px] text-gold">{i + 1}</span>
+              <span className="pt-1 text-[15px] leading-snug text-mute">{line}</span>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      {settings.onlineOpen && !hasActive && <p className="mb-10 text-center text-sm leading-relaxed text-faint">{t('howItWorks')}</p>}
+      {/* Price list */}
+      <section className="mb-10">
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-[17px] font-bold">{t('priceList')}</h2>
+          <span className="text-[12px] text-faint">{t('priceNote')}</span>
+        </div>
+        <ul className="card px-5 py-2">
+          {services
+            .filter((s) => s.active)
+            .map((s) => (
+              <li key={s.id} className="flex items-baseline gap-2 py-2.5 text-[15px]">
+                <span className="font-semibold">{names.service(s)}</span>
+                <span className="text-[13px] text-faint">{t('min', { n: s.minutes })}</span>
+                <span className="leaders" />
+                <span className="font-bold text-gold-soft">₹{s.price}</span>
+              </li>
+            ))}
+        </ul>
+      </section>
 
-      <footer className="mt-auto border-t border-line pt-6 pb-8">
-        <nav className="mb-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-mute">
-          <span className="eyebrow w-full">{t('screens')}</span>
-          <Link className="py-1 hover:text-gold" to="/reception">{t('reception')}</Link>
-          <Link className="py-1 hover:text-gold" to="/barber">{t('barber')}</Link>
-          <Link className="py-1 hover:text-gold" to="/display">TV</Link>
-          <Link className="py-1 hover:text-gold" to="/admin">{t('admin')}</Link>
-        </nav>
+      <footer className="mt-auto border-t border-line pt-5 pb-8">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-[15px] font-semibold text-ivory">Krutarth Raychura</p>
+            <p className="text-[15px] font-bold text-ivory">Krutarth Raychura</p>
             <p className="mt-0.5 text-[13px] text-mute">{t('credit')}</p>
           </div>
-          <p className="shrink-0 rounded-lg border border-gold/30 px-2.5 py-1 font-mono text-[13px] tracking-wider text-gold-soft">202612078</p>
+          <p className="shrink-0 rounded-lg border border-gold/35 px-2.5 py-1 font-mono text-[13px] tracking-wider text-gold-soft">202612078</p>
         </div>
       </footer>
-    </Page>
+    </CustomerShell>
   );
-}
-
-function Page({ children }) {
-  return <main className="mx-auto flex min-h-dvh max-w-[480px] flex-col px-5">{children}</main>;
 }

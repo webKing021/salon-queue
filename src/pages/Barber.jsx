@@ -1,16 +1,17 @@
-import { Link, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { useLang, useNames } from '../i18n/index.jsx';
 import { useQueue, useTick } from '../lib/useQueue.js';
 import { act } from '../lib/api.js';
 import { STATUS, barberState, callNextCheck, currentOf, nextFor } from '../lib/queueRules.js';
-import StaffGate from '../components/StaffGate.jsx';
-import { Avatar, Dot, Loading, OfflineBar, PhoneBar, mmss, useToast } from '../components/ui.jsx';
+import StaffShell from '../components/StaffShell.jsx';
+import { Avatar, Dot, Icon, Loading, OfflineBar, STATE_TEXT, mmss, useToast } from '../components/ui.jsx';
 
 export default function Barber() {
   return (
-    <StaffGate>
+    <StaffShell active="barber" width="max-w-xl">
       <BarberScreen />
-    </StaffGate>
+    </StaffShell>
   );
 }
 
@@ -22,38 +23,60 @@ function BarberScreen() {
   const [toastNode, toast] = useToast();
   useTick(1000);
 
+  const key = (name || '').toLowerCase();
+  const barber = state?.barbers.find((b) => b.id === key || b.name.toLowerCase() === key);
+
+  // This phone remembers its barber, so /barber opens straight to them next time.
+  useEffect(() => {
+    if (barber) localStorage.setItem('sq_barber', barber.id);
+  }, [barber]);
+
   if (!state) return <Loading />;
 
-  const key = (name || '').toLowerCase();
-  const barber = state.barbers.find((b) => b.id === key || b.name.toLowerCase() === key);
+  if (!name) {
+    const remembered = localStorage.getItem('sq_barber');
+    if (remembered && state.barbers.some((b) => b.id === remembered)) return <Navigate to={`/barber/${remembered}`} replace />;
+  }
 
-  // /barber (no name) or unknown name → pick from the list
+  const switcher = (
+    <nav className="-mx-4 mb-6 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" aria-label={t('allBarbers')}>
+      {state.barbers.map((b) => {
+        const on = barber?.id === b.id;
+        const st = barberState(b, state.spots);
+        return (
+          <Link
+            key={b.id}
+            to={`/barber/${b.id}`}
+            aria-current={on ? 'page' : undefined}
+            className={`flex min-h-12 shrink-0 items-center gap-2 rounded-full border py-1 pr-4 pl-1 text-[15px] font-bold transition-colors ${
+              on ? 'border-gold bg-gold text-gold-ink' : 'border-line-strong text-ivory hover:border-gold/50'
+            }`}
+          >
+            <Avatar barber={b} size={36} />
+            {names.barber(b)}
+            {!on && <Dot state={st} />}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+
   if (!barber) {
     return (
-      <main className="mx-auto min-h-dvh max-w-[480px] px-5">
-        <PhoneBar back="/" title={t('barber')} />
-        {name && <p className="mb-4 text-mute">{t('barberNotFound')}</p>}
-        <p className="eyebrow mb-3">{t('allBarbers')}</p>
-        <div className="space-y-2.5">
-          {state.barbers.map((b) => (
-            <Link key={b.id} to={`/barber/${b.id}`} className="card flex min-h-16 items-center gap-3 px-4 py-3 hover:border-gold/50">
-              <Avatar barber={b} size={40} />
-              <span className="flex-1 text-[17px] font-semibold">{names.barber(b)}</span>
-              <span className="flex items-center gap-1.5 text-[13px] text-mute">
-                <Dot state={barberState(b, state.spots)} /> {t(`st_${barberState(b, state.spots)}`)}
-              </span>
-            </Link>
-          ))}
-        </div>
+      <main className="mx-auto max-w-xl px-4 py-6">
+        <h1 className="mb-1 text-[22px] font-bold">{t('allBarbers')}</h1>
+        {name && <p className="mb-3 text-mute">{t('barberNotFound')}</p>}
+        <div className="mt-4">{switcher}</div>
       </main>
     );
   }
 
   const now = serverNow();
   const spots = state.spots;
+  const st = barberState(barber, spots);
   const cur = currentOf(barber.id, spots);
   const check = callNextCheck(barber, spots);
-  const upcoming = cur ? nextFor(barber.id, spots) : check.ok ? check.spot : nextFor(barber.id, spots);
+  const upcoming = nextFor(barber.id, spots);
   const served = spots.filter((s) => s.barber === barber.id && s.status === STATUS.DONE).length;
 
   async function run(action, payload) {
@@ -66,19 +89,20 @@ function BarberScreen() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-[480px] flex-col px-5">
+    <main className="mx-auto max-w-xl px-4 py-5">
       <OfflineBar offline={offline} />
-      <PhoneBar back="/barber" title="" />
+      {switcher}
 
-      <section className="mb-6 flex items-center gap-4">
-        <Avatar barber={barber} size={56} ring={Boolean(cur)} />
-        <div className="min-w-0 flex-1">
-          <h1 className="font-display text-3xl font-medium leading-tight">{names.barber(barber)}</h1>
-          <p className="text-[14px] text-mute">{t('servedToday', { n: served })}</p>
+      <section className="mb-5 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="font-display text-[32px] leading-tight font-medium">{names.barber(barber)}</h1>
+          <p className={`flex items-center gap-1.5 text-[14px] font-semibold ${STATE_TEXT[st]}`}>
+            <Dot state={st} /> {t(`st_${st}`)} <span className="text-mute">· {t('servedToday', { n: served })}</span>
+          </p>
         </div>
       </section>
 
-      <div role="group" className="mb-6 grid grid-cols-2 rounded-2xl border border-line-strong p-1">
+      <div role="group" className="mb-5 grid grid-cols-2 rounded-2xl border border-line-strong p-1">
         {[
           [false, t('available')],
           [true, t('onBreak')],
@@ -88,10 +112,11 @@ function BarberScreen() {
             type="button"
             aria-pressed={barber.onBreak === val}
             onClick={() => barber.onBreak !== val && run('setBreak', { barberId: barber.id, value: val })}
-            className={`min-h-12 rounded-xl text-[15px] font-semibold transition-colors ${
-              barber.onBreak === val ? (val ? 'bg-coal-up text-ivory' : 'bg-mint text-[#0d2418]') : 'text-mute'
+            className={`flex min-h-12 items-center justify-center gap-2 rounded-xl text-[15px] font-bold transition-colors ${
+              barber.onBreak === val ? (val ? 'bg-coal-high text-ivory' : 'bg-mint text-[#0d2418]') : 'text-mute'
             }`}
           >
+            {val && <Icon.Coffee />}
             {label}
           </button>
         ))}
@@ -99,50 +124,50 @@ function BarberScreen() {
 
       {!barber.onDuty && <p className="mb-4 rounded-xl bg-white/5 px-4 py-3 text-center text-mute">{t('err_offDuty')}</p>}
 
-      <section className="card mb-4 p-5">
-        <p className="eyebrow mb-3">{t('current')}</p>
+      <section className={`mb-4 rounded-2xl p-5 ${cur ? 'ticket' : 'card'}`} style={{ '--notch': 'var(--color-coal)' }}>
+        <p className={`mb-2 text-[12px] font-bold uppercase tracking-[0.14em] [:lang(gu)_&]:tracking-normal ${cur ? 'text-ink-soft' : 'text-faint'}`}>{t('current')}</p>
         {cur ? (
           <>
-            <div className="flex items-baseline justify-between gap-3">
-              <p className="token text-5xl text-gold">S-{cur.token}</p>
+            <div className="flex items-end justify-between gap-3">
+              <p className="token text-[72px] text-ink">S-{cur.token}</p>
               {cur.status === STATUS.IN_CHAIR ? (
-                <p className="token text-3xl tabular-nums">{mmss(now - cur.startedAt)}</p>
+                <p className="token text-[40px] text-ink">{mmss(now - cur.startedAt)}</p>
               ) : (
-                <p className="text-[13px] font-semibold text-gold-soft">{t('waitingToArrive')}</p>
+                <p className="mb-2 rounded-full bg-gold px-3 py-1 text-[13px] font-bold text-gold-ink">{t('waitingToArrive')}</p>
               )}
             </div>
-            <p className="mt-2 text-xl font-semibold">{cur.name}</p>
-            <p className="mt-1 text-[15px] text-mute">
+            <p className="mt-2 text-[20px] font-bold">{cur.name}</p>
+            <p className="mt-0.5 text-[15px] text-ink-soft">
               {cur.services.map((s) => names.service(s)).join(' · ')} · {t('min', { n: cur.totalMin })}
             </p>
           </>
         ) : (
-          <p className="py-2 text-lg text-mute">{barber.onBreak ? t('onBreakBanner') : t('noOneWaitingForYou')}</p>
+          <p className="py-3 text-[18px] text-mute">{barber.onBreak ? t('onBreakBanner') : t('noOneWaitingForYou')}</p>
         )}
       </section>
 
       {cur?.status === STATUS.CALLED && (
-        <button className="btn-gold mb-4 min-h-16 w-full text-xl" onClick={() => run('start', { id: cur.id })}>
+        <button className="btn-gold mb-4 min-h-16 w-full rounded-2xl text-[20px]" onClick={() => run('start', { id: cur.id })}>
           {t('start')}
         </button>
       )}
       {cur?.status === STATUS.IN_CHAIR && (
-        <button className="btn-mint mb-4 min-h-16 w-full text-xl" onClick={() => run('done', { id: cur.id })}>
-          {t('done')}
+        <button className="btn-mint mb-4 min-h-16 w-full rounded-2xl text-[20px]" onClick={() => run('done', { id: cur.id })}>
+          <Icon.Check width={22} height={22} /> {t('done')}
         </button>
       )}
       {!cur && (
-        <button className="btn-gold mb-4 min-h-16 w-full text-xl" disabled={!check.ok} onClick={() => run('callNext', { barberId: barber.id })}>
+        <button className="btn-gold mb-4 min-h-16 w-full rounded-2xl text-[20px]" disabled={!check.ok} onClick={() => run('callNext', { barberId: barber.id })}>
           {t('callNext')}
         </button>
       )}
 
-      <section className="mt-2 rounded-2xl border border-dashed border-line-strong px-5 py-4">
+      <section className="rounded-2xl border border-dashed border-line-strong px-5 py-4">
         <p className="eyebrow mb-1.5">{t('nextForYou')}</p>
         {upcoming ? (
           <p className="text-[17px]">
-            <span className="token mr-2 text-gold">S-{upcoming.token}</span>
-            <span className="font-semibold">{upcoming.name.split(' ')[0]}</span>
+            <span className="token mr-2 text-[26px] text-gold">S-{upcoming.token}</span>
+            <span className="font-bold">{upcoming.name.split(' ')[0]}</span>
             <span className="text-mute"> ({upcoming.services.map((s) => names.service(s)).join(', ')})</span>
           </p>
         ) : (

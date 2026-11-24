@@ -7,6 +7,7 @@ import Reception from './pages/Reception.jsx';
 import Barber from './pages/Barber.jsx';
 import Display from './pages/Display.jsx';
 import Admin from './pages/Admin.jsx';
+import StaffHub from './pages/StaffHub.jsx';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
       <Route path="/barber/:name" element={<Barber />} />
       <Route path="/display" element={<Display />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/staff" element={<StaffHub />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

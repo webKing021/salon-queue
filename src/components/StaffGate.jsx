@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { act, getPin, savePin } from '../lib/api.js';
 import { useLang } from '../i18n/index.jsx';
+import { Link } from 'react-router-dom';
 import { Icon, LangToggle, Wordmark } from './ui.jsx';
 
 /** PIN pad shown before staff screens. A correct PIN is remembered on this device for the day. */
@@ -50,7 +51,9 @@ export default function StaffGate({ children }) {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-sm flex-col px-6 py-5">
+    <>
+    <div className="pole" />
+    <div className="mx-auto flex min-h-[calc(100dvh-4px)] max-w-sm flex-col px-6 py-4">
       <div className="flex items-center justify-between">
         <Wordmark />
         <LangToggle />
@@ -93,8 +96,13 @@ export default function StaffGate({ children }) {
             <Icon.Back />
           </button>
         </div>
+        <Link to="/" className="mt-10 flex min-h-11 items-center gap-2 text-[14px] font-semibold text-mute hover:text-ivory">
+          <Icon.Back width={18} height={18} /> {t('backToCustomer')}
+        </Link>
+        <p className="mt-2 text-[12px] text-faint">{t('pinHint')}</p>
       </div>
     </div>
+    </>
   );
 }
 
@@ -102,7 +110,7 @@ function PadKey({ children, ...rest }) {
   return (
     <button
       type="button"
-      className="h-[72px] w-[72px] rounded-full border border-gold/40 font-display text-[28px] text-gold transition-colors hover:bg-gold/10 active:bg-gold active:text-gold-ink"
+      className="h-[72px] w-[72px] rounded-full border border-gold/40 token text-[34px] text-gold transition-colors hover:bg-gold/10 active:bg-gold active:text-gold-ink"
       {...rest}
     >
       {children}

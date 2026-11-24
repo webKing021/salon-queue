@@ -73,6 +73,29 @@ test('waiting time: chosen barber includes minutes left on their current custome
   assert.equal(R.spotEta(me, [cur, me], barbers, now).wait, 20);
 });
 
+test('waiting time: chosen barber counts only a fair share of Any customers ahead', () => {
+  n = 0;
+  const anyA = spot({ totalMin: 30 });
+  const anyB = spot({ totalMin: 30 });
+  const ravi1 = spot({ prefBarber: 'ravi', totalMin: 15 });
+  const me = spot({ prefBarber: 'ravi', totalMin: 30 });
+  // 15 (Ravi) + 60 / 3 barbers (Any share) = 35 -> 35
+  assert.equal(R.spotEta(me, [anyA, anyB, ravi1, me], barbers, 0).wait, 35);
+});
+
+test('Any barber is never slower than the fastest single barber', () => {
+  n = 0;
+  const spots = [
+    spot({ prefBarber: 'ravi', totalMin: 45 }),
+    spot({ prefBarber: 'ravi', totalMin: 45 }),
+    spot({ prefBarber: 'amit', totalMin: 30 }),
+    spot({ prefBarber: null, totalMin: 30 }),
+    spot({ status: 'in_chair', barber: 'imran', startedAt: 0, totalMin: 20 }),
+  ];
+  const any = R.newcomerEta(null, spots, barbers, 0).wait;
+  for (const b of barbers) assert.ok(any <= R.newcomerEta(b.id, spots, barbers, 0).wait, b.id);
+});
+
 test('never 0 min while people are ahead; 1st with 0 → You are next', () => {
   n = 0;
   const free = [{ id: 'ravi', onDuty: true, onBreak: false }];

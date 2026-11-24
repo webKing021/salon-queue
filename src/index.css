@@ -1,22 +1,29 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Brand: charcoal #1F2937 + gold #D4A017 (AGENTS.md) */
   --color-coal: #1f2937;
-  --color-coal-deep: #161d28;
-  --color-coal-up: #273244;
-  --color-line: rgb(255 255 255 / 0.08);
-  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-coal-deep: #18202b;
+  --color-coal-up: #263243;
+  --color-coal-high: #2e3b4e;
+  --color-line: rgb(255 255 255 / 0.07);
+  --color-line-strong: rgb(255 255 255 / 0.15);
   --color-gold: #d4a017;
-  --color-gold-soft: #e8c768;
-  --color-gold-ink: #2a2006;
+  --color-gold-soft: #e9c968;
+  --color-gold-ink: #261c03;
+  --color-paper: #f5efe3;
+  --color-paper-dim: #e7ddca;
+  --color-ink: #1b2330;
+  --color-ink-soft: #5b6472;
   --color-ivory: #f4efe6;
-  --color-mute: #9aa3b2;
-  --color-faint: #6b7586;
-  --color-mint: #5fbf8a;
-  --color-amber: #e8a33d;
-  --color-rose: #e07070;
+  --color-mute: #a1a9b6;
+  --color-faint: #6f7987;
+  --color-mint: #62c08e;
+  --color-amber: #eaa53e;
+  --color-rose: #e3726f;
 
   --font-display: 'Fraunces', 'Hind Vadodara', Georgia, serif;
+  --font-sign: 'Big Shoulders Display', 'Hind Vadodara', 'Arial Narrow', sans-serif;
   --font-sans: 'Manrope', 'Hind Vadodara', system-ui, sans-serif;
   --font-gu: 'Hind Vadodara', 'Manrope', system-ui, sans-serif;
 
@@ -54,15 +61,14 @@
   html:lang(gu) body { font-family: var(--font-gu); }
   button, a, input, select { touch-action: manipulation; }
   :focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
-  input[type='number']::-webkit-inner-spin-button { opacity: 0.4; }
 }
 
 @utility card {
-  @apply rounded-2xl border border-line bg-coal-deep;
+  @apply rounded-2xl border border-line bg-coal-up/60;
 }
 @utility btn {
   @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-[15px] font-semibold
-    transition-[background-color,border-color,color,transform] duration-150 active:scale-[0.98]
+    transition-[background-color,border-color,color,transform,opacity] duration-150 active:scale-[0.98]
     disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100;
 }
 @utility btn-gold { @apply btn bg-gold text-gold-ink hover:bg-gold-soft; }
@@ -71,21 +77,53 @@
 @utility btn-danger { @apply btn border border-rose/40 text-rose hover:bg-rose/10; }
 @utility btn-mint { @apply btn bg-mint text-[#0d2418] hover:brightness-110; }
 @utility field {
-  @apply min-h-12 w-full rounded-xl border border-line-strong bg-coal px-4 text-base text-ivory
+  @apply min-h-12 w-full rounded-xl border border-line-strong bg-coal-deep px-4 text-base text-ivory
     placeholder:text-faint focus:border-gold focus:outline-none;
 }
-@utility label { @apply mb-1.5 block text-[13px] font-semibold tracking-wide text-mute; }
+@utility label { @apply mb-1.5 block text-[13px] font-semibold text-mute; }
 @utility eyebrow {
-  @apply text-[11px] font-bold uppercase tracking-[0.18em] text-faint;
+  @apply text-[11px] font-bold uppercase tracking-[0.16em] text-faint;
   &:where(:lang(gu) *) { @apply text-[13px] normal-case tracking-normal; }
 }
+/* Signage numerals for tokens and counts */
 @utility token {
-  font-family: var(--font-display);
+  font-family: var(--font-sign);
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
+  line-height: 0.9;
 }
-@utility rule-double {
-  height: 5px;
-  border-top: 1px solid var(--color-gold);
-  border-bottom: 1px solid color-mix(in oklab, var(--color-gold) 45%, transparent);
+/* Gold hairline at the top of every screen */
+@utility pole {
+  height: 3px;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--color-gold) 35%, transparent), var(--color-gold) 30%, var(--color-gold) 70%, color-mix(in oklab, var(--color-gold) 35%, transparent));
+}
+/* Paper ticket */
+@utility ticket {
+  @apply rounded-[22px] bg-paper text-ink;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.5) inset, 0 18px 40px -18px rgb(0 0 0 / 0.6);
+}
+/* Perforated tear line with side notches; set --notch to the background behind the ticket */
+@utility perf {
+  position: relative;
+  height: 0;
+  margin-inline: 18px;
+  border-top: 2px dashed color-mix(in oklab, var(--color-ink) 22%, transparent);
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    top: -12px;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--notch, var(--color-coal));
+  }
+  &::before { left: -30px; }
+  &::after { right: -30px; }
+}
+@utility leaders {
+  flex: 1;
+  min-width: 12px;
+  border-bottom: 1.5px dotted var(--color-line-strong);
+  transform: translateY(-4px);
 }

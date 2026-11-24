@@ -110,22 +110,27 @@ export function position(spot, spots) {
 /**
  * Estimated wait in minutes (rounded up to 5) for someone with `prefBarber`
  * who has `ahead` customers in front of them.
- * - Any barber: (minutes ahead + minutes left on every current customer) ÷ barbers available
- * - Chosen barber X: minutes ahead (X or Any) + minutes left on X's current customer
+ * - Chosen barber X: minutes of people ahead who chose X
+ *                    + X's fair share of "Any" people ahead (their minutes ÷ barbers available)
+ *                    + minutes left on X's current customer
+ * - Any barber: goes to whichever barber is free first, so the smallest of the
+ *               available barbers' waits above.
  */
 export function estimateWait(prefBarber, ahead, spots, barbers, now) {
-  const aheadMin = ahead.reduce((sum, s) => sum + s.totalMin, 0);
-  if (prefBarber) {
-    const cur = currentOf(prefBarber, spots);
-    return roundUp5(aheadMin + (cur ? minutesLeft(cur, now) : 0));
-  }
   const onDuty = barbers.filter((b) => b.onDuty);
-  const available = onDuty.filter((b) => !b.onBreak).length || onDuty.length || 1;
-  const currentMin = onDuty.reduce((sum, b) => {
-    const cur = currentOf(b.id, spots);
-    return sum + (cur ? minutesLeft(cur, now) : 0);
-  }, 0);
-  return roundUp5((aheadMin + currentMin) / available);
+  const working = onDuty.filter((b) => !b.onBreak);
+  const pool = working.length ? working : onDuty;
+  const available = pool.length || 1;
+  const sumMin = (list) => list.reduce((sum, s) => sum + s.totalMin, 0);
+  const anyShare = sumMin(ahead.filter((s) => !s.prefBarber)) / available;
+  const forBarber = (id) => {
+    const cur = currentOf(id, spots);
+    const mine = sumMin(ahead.filter((s) => s.prefBarber === id));
+    return mine + anyShare + (cur ? minutesLeft(cur, now) : 0);
+  };
+  if (prefBarber) return roundUp5(forBarber(prefBarber));
+  if (!pool.length) return roundUp5(sumMin(ahead));
+  return roundUp5(Math.min(...pool.map((b) => forBarber(b.id))));
 }
 
 /** Position + wait for an existing waiting spot. */

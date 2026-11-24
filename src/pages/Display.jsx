@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
+import { Link } from 'react-router-dom';
 import { useLang, useNames } from '../i18n/index.jsx';
 import { useQueue, useTick } from '../lib/useQueue.js';
 import { STATUS, barberState, currentOf, spotEta, waitingList } from '../lib/queueRules.js';
-import { Avatar, Icon, LangToggle, OfflineBar, clockText } from '../components/ui.jsx';
+import { Avatar, Icon, LangToggle, Logo, OfflineBar, clockText } from '../components/ui.jsx';
 
 const FLASH_MS = 5000;
 
@@ -16,7 +17,16 @@ export default function Display() {
   const [flashing, setFlashing] = useState(null); // { token, barberId, until }
   const seen = useRef(null);
   const audio = useRef(null);
+  const [showExit, setShowExit] = useState(false);
+  const exitTimer = useRef(null);
   useTick(1000);
+
+  // The exit button only appears when someone moves the mouse / touches the screen.
+  function wake() {
+    setShowExit(true);
+    clearTimeout(exitTimer.current);
+    exitTimer.current = setTimeout(() => setShowExit(false), 4000);
+  }
 
   useEffect(() => {
     QRCode.toDataURL(`${window.location.origin}/`, {
@@ -67,25 +77,32 @@ export default function Display() {
   const flashBarber = flashing && state.barbers.find((b) => b.id === flashing.barberId);
 
   return (
-    <main onClick={enableSound} className="flex h-dvh flex-col overflow-hidden bg-coal text-ivory">
+    <main onClick={() => { enableSound(); wake(); }} onMouseMove={wake} className="flex h-dvh flex-col overflow-hidden bg-coal text-ivory">
       <OfflineBar offline={offline} />
+      <div className="pole" />
+      <Link
+        to="/staff"
+        className={`fixed top-4 left-1/2 z-50 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-full bg-paper px-5 text-[15px] font-bold text-ink shadow-xl transition-opacity ${
+          showExit ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+      >
+        <Icon.Back width={18} height={18} /> {t('exitTv')}
+      </Link>
       <header className="flex items-center justify-between border-b border-line px-[3vw] py-[1.6vh]">
         <div className="flex items-center gap-4">
-          <span className="grid h-[5vh] w-[5vh] place-items-center rounded-full border border-gold/60 text-gold">
-            <Icon.Scissors width="55%" height="55%" />
-          </span>
+          <Logo size={Math.round(Math.min(window.innerHeight * 0.06, 64))} />
           <h1 className="font-display text-[clamp(28px,3.2vw,64px)] font-medium tracking-tight">{t('salonName')}</h1>
         </div>
         <div className="flex items-center gap-6">
           <LangToggle />
-          <p className="token text-[clamp(32px,3.6vw,72px)] text-gold">{clockText(now)}</p>
+          <p className="token text-[clamp(40px,4.4vw,88px)] text-gold">{clockText(now)}</p>
         </div>
       </header>
 
       {flashing && (
         <div className="animate-flash flex items-center justify-center gap-[2vw] px-[3vw] py-[1.8vh]">
           <span className="text-[clamp(22px,2vw,40px)] font-semibold">{t('nowCalling')}</span>
-          <span className="token text-[clamp(56px,5.5vw,120px)] leading-none font-semibold">S-{flashing.token}</span>
+          <span className="token text-[clamp(72px,7vw,150px)] leading-none">S-{flashing.token}</span>
           <span className="text-[clamp(22px,2vw,40px)] font-semibold">{t('goToBarber', { name: names.barber(flashBarber) })}</span>
         </div>
       )}
@@ -116,7 +133,7 @@ export default function Display() {
                   {cur ? (
                     <>
                       <p className="text-[clamp(14px,1.1vw,24px)] font-semibold uppercase tracking-[0.2em] opacity-60 [:lang(gu)_&]:tracking-normal">{t('now')}</p>
-                      <p className={`token text-[clamp(64px,6.5vw,150px)] leading-none ${isFlash ? '' : 'text-gold'}`}>S-{cur.token}</p>
+                      <p className={`token text-[clamp(80px,8vw,180px)] leading-none ${isFlash ? '' : 'text-gold'}`}>S-{cur.token}</p>
                     </>
                   ) : (
                     <p className={`text-[clamp(28px,2.8vw,60px)] font-semibold ${st === 'free' ? 'text-mint' : 'text-mute'}`}>
@@ -139,7 +156,7 @@ export default function Display() {
                 const eta = spotEta(s, state.spots, state.barbers, now);
                 return (
                   <li key={s.token} className="flex flex-1 items-center gap-[1.5vw]">
-                    <span className="token w-[30%] text-[clamp(44px,4vw,96px)] leading-none">S-{s.token}</span>
+                    <span className="token w-[30%] text-[clamp(56px,5vw,120px)] leading-none">S-{s.token}</span>
                     <span className="min-w-0 flex-1 truncate text-[clamp(22px,2vw,44px)]">{s.name}</span>
                     <span className="text-[clamp(20px,1.7vw,38px)] text-mute">~{eta.wait || 5} {t('ringMin')}</span>
                   </li>

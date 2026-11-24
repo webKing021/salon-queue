@@ -214,4 +214,60 @@ export default {
   err_notFound: 'Not found',
   err_server: 'Something went wrong. Please try again.',
   err_network: 'No connection. Please try again.',
+
+  // navigation
+  staffArea: 'Staff',
+  staffBtn: 'Staff',
+  customerView: 'Customer view',
+  backToCustomer: 'Back to customer home',
+  pinHint: 'Demo PIN: 1234',
+  navReception: 'Reception',
+  navReceptionHint: 'Run the queue: call next, add walk-ins, mark no-shows.',
+  navBarbers: 'Barbers',
+  navBarbersHint: 'For each barber’s phone: Start and Done.',
+  navTv: 'TV display',
+  navTvHint: 'Waiting-area screen. Flashes and chimes when a token is called.',
+  navSettings: 'Settings',
+  navSettingsHint: 'Services, barbers on duty, opening hours, today’s stats.',
+  staffHubTitle: 'Which screen is this device?',
+  staffHubSub: 'Pick once. Every staff screen has the same tabs, so you can switch any time.',
+  openAs: 'Open as',
+  device_tablet: 'Tablet',
+  device_phone: 'Phone',
+  device_tv: 'TV',
+  device_any: 'Any device',
+  exitTv: 'Exit TV mode',
+
+  // home extras
+  queueNow: 'Queue right now',
+  nowServingTitle: 'Now serving',
+  priceList: 'Price list',
+  priceNote: 'Pay at the salon after your service.',
+  yourTicket: 'Your ticket',
+  openTicket: 'Open my ticket',
+  howTitle: 'How it works',
+  how1: 'Join from your phone — it takes 30 seconds.',
+  how2: 'Watch your turn live. Wait at home, have a chai, run an errand.',
+  how3: 'Come in when your phone says “Start coming”.',
+  joinSub: ({ n }) => `Expected wait about ${n} min`,
+  joinSubNow: 'No wait right now',
+
+  // join extras
+  stepDetails: 'Your details',
+  waitFor: ({ n }) => `~${n} min`,
+  waitNone: 'No wait',
+
+  // status extras
+  ticketLabel: 'Token',
+  aheadOfYou: ({ n }) => (n === 1 ? '1 person ahead of you' : `${n} people ahead of you`),
+  nameOnTicket: 'Name',
+
+  // reception extras
+  newWalkInWait: ({ n }) => `New walk-in waits ~${n} min`,
+  onlineOpenPill: 'Online queue open',
+  onlineClosedPill: 'Online queue closed',
+  estShort: ({ n }) => `~${n} min`,
+  joinedAgo: ({ n }) => `${n} min ago`,
+  colEst: 'Est. wait',
+  liveShort: 'Updates live',
 };

@@ -5,6 +5,26 @@ Barbers: Ravi, Amit, Imran
 Theme: charcoal `#1F2937` background, gold `#D4A017` accent, rounded cards, white text.
 Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sits in the top-right corner of every screen.
 
+## Look & navigation (v2 — after the first build felt generic and hard to find your way around)
+- **Visual style:** charcoal + gold stay. Tokens look like an ivory **paper ticket** with a perforated
+  tear line. Numbers use a tall signage font (Big Shoulders Display), headings use Fraunces, text uses Manrope,
+  and Gujarati uses Hind Vadodara. A thin gold line runs along the top of every screen.
+- **Two areas, never mixed:**
+  - **Customer area** (`/`, `/join`, `/status/:id`): phone layout, back arrow top-left, language toggle top-right.
+    Home is the hub; the customer never needs another menu.
+  - **Staff area** (`/staff`, `/reception`, `/barber/:name`, `/display`, `/admin`): one PIN, then the
+    **same tab bar on every staff screen**: Reception · Barbers · TV display · Settings.
+    Tablet/desktop: tabs in the top bar. Phone: tab bar at the bottom (thumb reach).
+    Top bar also has "Customer view" and a lock button.
+- **One way in for staff:** a clear **[ Staff ]** button in the Home top bar → `/staff`.
+- All tap targets at least 44px.
+
+## Staff hub (`/staff`)
+**Who:** any staff member picking up a device. PIN first.
+- Title "Which screen is this device?"
+- 4 big cards with device hints: Reception (tablet), Barbers (phone), TV display (TV), Settings (any device)
+- Barbers card has one-tap buttons "Open as Ravi / Amit / Imran"
+
 ## Services (starting data)
 
 | Service (EN) | Service (GU) | Minutes | Price |
@@ -22,11 +42,14 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 ## Screen 1: Home (`/`)
 **Who:** customers. **Why:** see how busy the salon is and join the queue.
 **Layout (phone, top to bottom):**
-- Salon name + scissors logo; badge "Open · Closes 9 PM" (green) or "Closed" (grey)
-- Live card: "6 people waiting · about 50 min"
-- Barber chips with status: Ravi (busy) · Amit (free) · Imran (on break)
-  - busy = gold dot, free = green dot, on break = grey dot
-- Big gold button **[ Join Queue ]** → `/join`
+- Top bar: logo, **[ Staff ]** button, language toggle
+- Salon name; "Open · Closes 9 PM" (green) or "Closed" (grey)
+- **Your ticket** (only if this phone is in the queue): paper ticket with token, position and wait → opens My Status
+- **Queue right now** card: "6 people waiting" + "about 50 min", then **Now serving**: one row per barber
+  with their current token, or Free (green) / On break (grey)
+- Big gold button **[ Join Queue ]** with "Expected wait about 50 min" under it → `/join`
+- **How it works**: 3 short numbered lines
+- **Price list**: every active service with minutes and price (menu style)
 - Small link "Already in the queue? See my status" → opens saved status (if this phone has one)
 - Footer: links to the staff screens (Reception · Barber · TV · Owner settings) and the
   project credit: **Krutarth Raychura · 202612078** (IT603 lab project)
@@ -47,7 +70,8 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 - **Name** (required, 2–30 letters)
 - **Phone** (required, exactly 10 digits, starts with 6–9)
 - **Service cards** (multi-select, max 3): each card shows name, minutes, price; selected card has a gold border + tick
-- **Barber picker** (horizontal cards): "Any barber (fastest)" first, then a photo card per barber on duty. A barber on break shows "On break" tag but can still be chosen.
+- Sections are numbered **1 Your details · 2 Services · 3 Barber** so the order is obvious
+- **Barber picker** (list): "Any barber (fastest)" first, then one row per barber on duty with photo and **their own expected wait** ("~25 min"), so the customer can compare. A barber on break shows "On break" but can still be chosen.
 - **Live summary bar** (sticky at bottom): "Total 45 min · ₹230 · Expected wait ~35 min" — updates on every tap
 - **[ Confirm ]** gold button inside the summary bar → creates the spot and goes to `/status/:id`
 
@@ -62,8 +86,8 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 
 ## Screen 3: My Status (`/status/:id`)
 **Who:** customer who joined. **Why:** know their turn without sitting in the salon.
-**Layout (phone, top to bottom):**
-- Token **S-14** very large in gold
+**Layout (phone, top to bottom):** the whole spot is shown as a paper ticket.
+- Token **S-14** very large
 - Position: "4th in line" (or "You're next!" when 1st)
 - Circular countdown ring: "about 35 min"; updates by itself, no refresh
 - Details card: services, chosen barber, total price to pay at the salon
@@ -83,14 +107,16 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 ## Screen 4: Reception Dashboard (`/reception`) — tablet, landscape
 **Who:** receptionist / owner. **Why:** run the whole queue from one place. Protected by staff PIN.
 **Layout:**
-- **Top bar:** salon name, current time, "Waiting: 8", **[ + Add walk-in ]** gold button, language toggle
-- **Left column (40%) — barber cards**, one per barber on duty:
+- **Top bar:** staff tabs (see Look & navigation)
+- **Toolbar:** "Reception", current time, "Waiting: 8", "New walk-in waits ~20 min", online queue Open/Closed pill (→ Settings), **[ + Add walk-in ]**
+- **Barber cards in a 3-column row** (one per barber on duty):
   - Name + photo + status (Free / Busy / On break)
   - Current customer: token, name, services
   - "Time left" progress bar (based on service minutes)
   - **[ Call next ]** — only enabled when the barber is free and has someone eligible to call
-  - If a customer is Called but not started: "Called S-14 · 3 min ago" + **[ No-show ]** (enabled after 10 min)
-- **Right column (60%) — waiting list** in order:
+  - If a customer is Called but not started: "Called S-14 · 3 min ago" + **[ Start ]** + **[ No-show ]** (enabled after 10 min)
+  - In chair: **[ Done ]** (so reception can run a barber who has no phone)
+- **Waiting list** below, full width, in order (adds an "Est. wait" column):
   - Columns: token · name · services · preferred barber · waiting time · action **[Cancel]**
   - (No-show is on the barber card, because only a **Called** customer can become a No-show — see rules)
   - Rows waiting more than 60 min have an amber background
@@ -104,7 +130,8 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 ---
 
 ## Screen 5: Barber View (`/barber/:name`) — phone
-`/barber` without a name shows the list of barbers to pick from.
+- Row of barber name buttons at the top (Ravi · Amit · Imran) to switch in one tap
+- The phone remembers its barber, so `/barber` opens straight to them next time
 **Who:** each barber. **Why:** see who is in their chair and what's next. Protected by staff PIN.
 **Layout (top to bottom):**
 - Barber name + toggle **On break / Available**
@@ -128,6 +155,8 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 - **Right (40%)** — "Up next": next 5 tokens with name (first name only) and estimated time "~10 min"
 - Footer: "Join from your phone: scan the QR" + QR code of the home page link
 - Text readable from 5 metres (token numbers at least 64px)
+
+**Exit:** moving the mouse or tapping shows an "Exit TV mode" button for 4 seconds (→ `/staff`).
 
 **Behaviour:** when a token is called it flashes gold for 5 seconds and a short chime plays. (Browser needs one click on the screen to allow sound — show "Tap to enable sound" once.)
 

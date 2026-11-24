@@ -48,8 +48,10 @@ Customer taps Cancel my spot (or receptionist taps Cancel) → spot becomes **Ca
   - Customer who chose Ravi: count everyone ahead who chose Ravi or "Any".
 
 ### Waiting time
-- **"Any barber" customer:** (total service minutes of everyone Waiting ahead + minutes left on all current In chair customers) ÷ number of barbers available. Round up to the nearest 5 min.
-- **Customer who chose a barber:** minutes of people ahead who chose that barber or "Any" + minutes left on that barber's current customer. Round up to 5 min.
+- **"Any barber" customer:** goes to whichever barber is free first, so their wait is the smallest of the available barbers' waits (calculated as below). Round up to the nearest 5 min.
+  - (Changed after testing: the first version divided everyone's minutes by the number of barbers, which showed "Any barber (fastest)" as slower than choosing Imran.)
+- **Customer who chose a barber:** minutes of people ahead who chose that barber + that barber's fair share of the "Any" people ahead (their minutes ÷ barbers available) + minutes left on that barber's current customer. Round up to 5 min.
+  - (Changed after testing: counting every "Any" customer fully made a chosen barber look 2× slower than "Any", e.g. 205 min vs 105 min.)
 - Barber on break → their minutes still count, show the note "Ravi is on break".
 - If the result is 0 and the customer is 1st → show "You're next!", never "0 min" while people are ahead.
 - Waiting time must go down as customers finish.

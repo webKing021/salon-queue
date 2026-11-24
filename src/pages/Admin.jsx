@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useLang, useNames } from '../i18n/index.jsx';
 import { useQueue } from '../lib/useQueue.js';
-import { act, clearPin } from '../lib/api.js';
+import { act } from '../lib/api.js';
 import { barberState, dayStats } from '../lib/queueRules.js';
-import StaffGate from '../components/StaffGate.jsx';
-import { Avatar, Confirm, Icon, LangToggle, Loading, Modal, OfflineBar, Toggle, Wordmark, useToast } from '../components/ui.jsx';
+import StaffShell, { lockStaff } from '../components/StaffShell.jsx';
+import { Avatar, Confirm, Icon, Loading, Modal, OfflineBar, Toggle, useToast } from '../components/ui.jsx';
 
 export default function Admin() {
   return (
-    <StaffGate>
+    <StaffShell active="admin" width="max-w-6xl">
       <Settings />
-    </StaffGate>
+    </StaffShell>
   );
 }
 
@@ -25,8 +24,7 @@ function Settings() {
 
   if (!state) return <Loading />;
   if (!state.staff) {
-    clearPin();
-    window.location.reload();
+    lockStaff();
     return null;
   }
 
@@ -47,22 +45,12 @@ function Settings() {
   }
 
   return (
-    <div className="min-h-dvh">
+    <div>
       <OfflineBar offline={offline} />
-      <header className="flex items-center gap-4 border-b border-line bg-coal-deep px-5 py-3 lg:px-8">
-        <Wordmark />
-        <span className="hidden h-6 w-px bg-line-strong sm:block" />
-        <h1 className="text-[15px] font-semibold text-mute">{t('admin')}</h1>
-        <div className="ml-auto flex items-center gap-3">
-          <Link to="/reception" className="btn-ghost hidden sm:inline-flex">{t('reception')}</Link>
-          <LangToggle />
-          <button className="btn-quiet px-2" aria-label={t('logout')} title={t('logout')} onClick={() => { clearPin(); window.location.reload(); }}>
-            <Icon.Lock />
-          </button>
-        </div>
-      </header>
 
-      <div className="mx-auto max-w-6xl space-y-6 p-5 lg:p-8">
+
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 md:px-6">
+        <h1 className="text-[22px] font-bold">{t('admin')}</h1>
         {/* stats */}
         <section>
           <h2 className="eyebrow mb-3">{t('statsToday')}</h2>
@@ -172,7 +160,7 @@ function Settings() {
 function Stat({ label, value, gold }) {
   return (
     <div className="card px-5 py-4">
-      <p className={`token text-4xl ${gold ? 'text-gold' : ''}`}>{value}</p>
+      <p className={`token text-[48px] ${gold ? 'text-gold' : ''}`}>{value}</p>
       <p className="mt-1 text-[13px] text-mute">{label}</p>
     </div>
   );
