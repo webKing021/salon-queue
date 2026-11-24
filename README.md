@@ -2,6 +2,8 @@
 
 **Live demo:** https://salon-queue-krutarth078.vercel.app
 
+**Demo video (YouTube):** https://youtu.be/XZm6A60CO2w
+
 **Hosted on:** Vercel (frontend + one serverless API function) · SQLite (Turso free tier)
 
 **Staff PIN (Reception / Barber / Admin):** `1234`
