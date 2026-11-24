@@ -6,9 +6,10 @@
 
 **Staff PIN (Reception / Barber / Admin):** `1234`
 
-> Testing outside salon hours (10 AM – 9 PM IST)? Online joining is closed then, as the rules say.
-> Open `/admin` (PIN 1234) and change the opening hours, or add a walk-in from `/reception`.
-> `/admin` also has **Add 8 sample customers** to fill the queue for a quick demo.
+> **Staff screens:** tap **Staff** in the top bar of the Home screen (or open `/staff`) and enter PIN 1234.
+> Testing outside salon hours (10 AM – 9 PM IST)? Online joining is closed then, as the rules say:
+> change the hours in **Settings**, or add a walk-in from **Reception**.
+> Settings also has **Add 8 sample customers** to fill the queue for a quick demo.
 
 ## About
 A queue app for **Royal Cuts Salon**. Customers join the queue from their phone, see their
@@ -21,20 +22,25 @@ Built as a vibe coding project for IT603 – Intro to Programming (MSc IT, Sem 1
 ## Screens
 | Screen | URL | Used by |
 |---|---|---|
-| Home | `/` | Customers |
+| Home (customer hub) | `/` | Customers |
 | Join Queue | `/join` | Customers |
 | My Status | `/status/:id` | Customers |
 | Reception Dashboard | `/reception` | Receptionist (tablet) — PIN |
 | Barber View | `/barber/:name` (e.g. `/barber/ravi`) | Barbers (phone) — PIN |
 | Waiting Area TV | `/display` | Waiting area TV |
 | Owner Settings | `/admin` | Owner — PIN |
+| Staff hub | `/staff` | Any staff member: pick the screen for this device — PIN |
+
+**Navigation:** customers only ever use Home → Join → My ticket (back arrow top-left).
+Staff enter once through **Staff** on Home. After that, every staff screen has the same tabs:
+**Reception · Barbers · TV display · Settings** (top on a tablet, bottom on a phone).
 
 ## Try the main flow (2 minutes)
 1. Phone (or mobile view): open `/`, tap **Join Queue**, pick Haircut + Beard trim, **Confirm** → you get a token.
-2. Second window: `/reception` (PIN 1234) → your token appears in the waiting list.
-3. Third window: `/display` → click once to enable sound.
+2. Second window: Home → **Staff** → PIN 1234 → **Reception** → your token appears in the waiting list.
+3. Third window: Staff → **TV display** → click once to enable sound.
 4. Reception: **Call next** on a barber card → the phone shows "It's your turn!", the TV flashes and chimes.
-5. `/barber/ravi` (or whichever barber was called): **Start**, then **Done** → every window updates within ~2 s.
+5. Staff → **Barbers** → tap the barber that was called → **Start**, then **Done** → every window updates within ~2 s.
 
 ## Project docs
 - [AGENTS.md](AGENTS.md) — instructions for the AI coding agent
@@ -42,9 +48,11 @@ Built as a vibe coding project for IT603 – Intro to Programming (MSc IT, Sem 1
 - [docs/02-screens.md](docs/02-screens.md) — every screen's layout and behaviour
 - [docs/03-flows-rules.md](docs/03-flows-rules.md) — flows, queue rules, test checklist
 - [prompts.md](prompts.md) — every prompt used, in order
+- [reflection.md](reflection.md) — one thing the agent got wrong and how I fixed it
 
 ## Tech stack
 - React 19 + Vite + Tailwind CSS 4 + React Router
+- Fonts: Fraunces (headings), Big Shoulders Display (token numbers), Manrope (text), Hind Vadodara (Gujarati)
 - One API endpoint `api/queue.js` (Vercel serverless function), logic in `server/actions.js`
 - **SQLite** via Node's built-in `node:sqlite` — no paid database, no extra account
 - All queue rules (who's next, position, waiting time, statuses) in one file: `src/lib/queueRules.js`
@@ -55,7 +63,7 @@ Built as a vibe coding project for IT603 – Intro to Programming (MSc IT, Sem 1
 Vercel functions can't keep a file forever. Without extra setup the SQLite file lives in
 `/tmp`, which is fine for light use, but each Vercel instance has its own copy: the queue can
 reset after the site sits idle, and under bursts of traffic two devices can see different queues.
-For the live link the same SQLite schema runs on **Turso** (hosted SQLite, free tier), connected
+The live link runs the same SQLite schema on **Turso** (hosted SQLite, free tier), connected
 from Vercel → Storage, which sets `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. The app picks it up
 automatically, with no code changes. Both paths pass the same 28-check test script.
 
@@ -73,7 +81,7 @@ Optional environment variables: `STAFF_PIN` (default `1234`), `TURSO_DATABASE_UR
 
 ## Test checklist results
 From [docs/03-flows-rules.md](docs/03-flows-rules.md). Checked with an automated API script
-(28 checks), 11 unit tests for the queue rules, and by clicking through each screen in
+(28 checks, run locally and on the live link), 13 unit tests for the queue rules, and by clicking through each screen in
 phone, tablet and TV sizes in both languages.
 
 | # | Check | Result |
