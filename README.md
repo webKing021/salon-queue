@@ -11,6 +11,16 @@
 > change the hours in **Settings**, or add a walk-in from **Reception**.
 > Settings also has **Add 8 sample customers** to fill the queue for a quick demo.
 
+## Student
+
+| | |
+|---|---|
+| **Name** | Krutarth Raychura |
+| **Student ID** | 202612078 |
+| **Assignment** | Lab 11: Salon Queue Management System (vibe coding lab) |
+| **Course** | IT603 Introduction to Programming, MSc IT, Semester 1 |
+| **Submitted** | 24 November 2026 |
+
 ## About
 A queue app for **Royal Cuts Salon**. Customers join the queue from their phone, see their
 position and estimated wait, and get a full-screen "It's your turn!" alert. The receptionist
