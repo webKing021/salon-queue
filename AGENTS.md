@@ -10,15 +10,18 @@ and get called; reception and barbers manage the queue; a TV shows who's next.
 
 ## Stack
 - Frontend: React + Vite + Tailwind CSS + React Router.
-- Backend: Vercel serverless functions in the `/api` folder of this same repo (Node).
-- Database: Neon Postgres, added from the Vercel dashboard (Storage tab). Use
-  `@neondatabase/serverless` with SQL queries. Connection string comes from the
-  `DATABASE_URL` environment variable (`.env.local` locally, never committed).
-- Token numbers (S-1, S-2…) must be given out inside one SQL transaction / atomic
-  update, so two people joining at once never get the same token.
-- Sync: every screen polls the API every 2–3 seconds (must update within 5 s).
+- Backend: ONE Vercel serverless function, `api/queue.js` (GET = state, POST = actions).
+  Logic in `server/actions.js`; in dev the same handler is mounted by `vite.config.js`.
+- Database: **SQLite** (no paid service). `server/db.js` uses Node's built-in
+  `node:sqlite` with a file (`data/salon.db` locally, `/tmp/salon.db` on Vercel).
+  Optional: set `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN` to use Turso (hosted SQLite,
+  free tier) so data survives Vercel restarts. No other database.
+- Token numbers (S-1, S-2…) come from one atomic `UPDATE … RETURNING` statement, so two
+  people joining at once never get the same token. A partial unique index enforces
+  one active spot per phone.
+- Sync: every screen polls `/api/queue` every 2 s (must update within 5 s).
   No WebSockets, no Firebase, no other external services.
-- Run locally with `vercel dev` (runs Vite + `/api` together).
+- Run locally with `npm run dev` (Vite + API together). Rule tests: `npm run test:rules`.
 - Hosting: Vercel only. `vercel.json` rewrites every non-`/api` route to `index.html`.
 - Live link must be the first line after the title in README.md.
 

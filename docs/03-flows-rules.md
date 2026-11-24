@@ -60,7 +60,7 @@ Customer taps Cancel my spot (or receptionist taps Cancel) → spot becomes **Ca
 - The spot id is also saved on the customer's phone so Home can show "View my spot".
 
 ### Opening hours
-- Salon open 10:00 AM – 9:00 PM.
+- Salon open 10:00 AM – 9:00 PM by default (owner can change the hours in Owner Settings). Times are India time (IST).
 - Online joining closes 30 min before closing (8:30 PM) or when the owner switches the queue to Closed.
 - Walk-ins added by reception are still allowed while the online queue is closed.
 
@@ -73,6 +73,10 @@ Customer taps Cancel my spot (or receptionist taps Cancel) → spot becomes **Ca
 
 ### Staff screens
 - `/reception`, `/barber/:name`, `/admin` need the 4-digit staff PIN (test PIN 1234).
+- The PIN is checked by the server for every staff action, not only by the screen.
+
+### Privacy
+- The public queue (Home, TV, My Status) shows first names and tokens only — never phone numbers.
 
 ## Test checklist
 - [ ] 1. Join with 2 services → correct total time and price shown in the summary

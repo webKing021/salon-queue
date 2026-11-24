@@ -28,6 +28,8 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
   - busy = gold dot, free = green dot, on break = grey dot
 - Big gold button **[ Join Queue ]** → `/join`
 - Small link "Already in the queue? See my status" → opens saved status (if this phone has one)
+- Footer: links to the staff screens (Reception · Barber · TV · Owner settings) and the
+  project credit: **Krutarth Raychura · 202612078** (IT603 lab project)
 
 **States:**
 - Online queue closed → Join button disabled, message "Online queue is closed. Please visit the salon."
@@ -89,7 +91,8 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
   - **[ Call next ]** — only enabled when the barber is free and has someone eligible to call
   - If a customer is Called but not started: "Called S-14 · 3 min ago" + **[ No-show ]** (enabled after 10 min)
 - **Right column (60%) — waiting list** in order:
-  - Columns: token · name · services · preferred barber · waiting time · actions **[No-show]** **[Cancel]**
+  - Columns: token · name · services · preferred barber · waiting time · action **[Cancel]**
+  - (No-show is on the barber card, because only a **Called** customer can become a No-show — see rules)
   - Rows waiting more than 60 min have an amber background
   - Walk-ins have a small "Walk-in" tag
 - **Add walk-in form** (pop-up): name, phone (optional for walk-ins), services, barber → **[Add to queue]** puts them at the end
@@ -101,6 +104,7 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 ---
 
 ## Screen 5: Barber View (`/barber/:name`) — phone
+`/barber` without a name shows the list of barbers to pick from.
 **Who:** each barber. **Why:** see who is in their chair and what's next. Protected by staff PIN.
 **Layout (top to bottom):**
 - Barber name + toggle **On break / Available**
@@ -133,10 +137,12 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 **Who:** owner. **Why:** set up the day. Protected by staff PIN.
 **Layout (tablet/desktop, cards):**
 - **Queue switch:** Open / Closed for online joining (walk-ins still allowed)
+- **Opening hours:** open time + close time (default 10:00 – 21:00); online joining stops 30 min before closing
 - **Barbers on duty today:** one toggle per barber
 - **Services list:** name EN, name GU, minutes, price, on/off toggle, [Edit]; **[ + Add service ]**
 - **Today's stats cards:** customers served · average wait (min) · no-shows · cancelled
 - **[ Reset day ]** — clears today's queue and restarts tokens at S-1 (confirmation pop-up)
+- **[ Add 8 sample customers ]** — demo helper so Reception and TV can be tested quickly
 
 **States:** turning a service off hides it from Join immediately; it stays on spots that already have it.
 
