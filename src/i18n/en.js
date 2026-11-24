@@ -290,4 +290,5 @@ export default {
   notFoundPage: 'This page doesn’t exist.',
   tvJoinShort: 'Scan to join from your phone',
   closedBoard: ({ time }) => `We’re closed. The queue opens at ${time}.`,
+  qrAlt: 'QR code to join the queue',
 };

@@ -80,7 +80,7 @@ function Dashboard() {
           <span className="rounded-full bg-sunk px-3 py-1.5 text-[13px] font-semibold text-ink-3">{newWait === 0 ? t('newWalkInNoWait') : t('newWalkInWait', { n: newWait })}</span>
           <Link
             to="/admin"
-            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold ${
+            className={`flex min-h-11 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold ${
               settings.onlineOpen ? 'bg-green-soft text-green' : 'bg-amber-soft text-amber'
             }`}
           >
@@ -199,7 +199,7 @@ function BarberCard({ barber, spots, now, t, names, run, onNoShow }) {
       <header className="mb-3 flex items-center gap-3">
         <Avatar barber={barber} size={42} ring={cur?.status === STATUS.CALLED} />
         <div className="min-w-0 flex-1">
-          <Link to={`/barber/${barber.id}`} className="text-[17px] font-bold hover:text-navy">{names.barber(barber)}</Link>
+          <Link to={`/barber/${barber.id}`} className="inline-flex min-h-11 min-w-11 items-center text-[17px] font-bold hover:text-navy">{names.barber(barber)}</Link>
           <p className={`flex items-center gap-1.5 text-[13px] font-semibold ${STATE_TEXT[st]}`}>
             <Dot state={st} /> {t(`st_${st}`)}
           </p>

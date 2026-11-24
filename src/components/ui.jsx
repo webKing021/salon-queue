@@ -125,7 +125,7 @@ export function LangToggle({ className = '', dark = false }) {
             setLang(code);
           }}
           aria-pressed={lang === code}
-          className={`min-h-10 min-w-11 rounded-full px-2.5 transition-colors ${
+          className={`min-h-11 min-w-11 rounded-full px-2.5 transition-colors ${
             lang === code
               ? dark
                 ? 'bg-white text-navy shadow-sm'
@@ -168,7 +168,7 @@ export function Pole({ height = 120, width = 18, spinning = false, fill = 1, cla
 export function Wordmark({ to = '/', sub, open = true }) {
   const { t } = useLang();
   return (
-    <Link to={to} className="flex min-w-0 items-center gap-2.5 text-ink">
+    <Link to={to} className="flex min-h-11 min-w-0 items-center gap-2.5 text-ink">
       <Pole height={34} width={9} spinning={open} />
       <span className="min-w-0 leading-none">
         <span className="display block truncate text-[19px]">{t('salonShort')}</span>
@@ -231,6 +231,7 @@ export function Dot({ state, className = '' }) {
 
 // ---------------------------------------------------------------- overlays
 export function Modal({ open, onClose, title, children, wide = false }) {
+  const { t } = useLang();
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === 'Escape' && onClose?.();
@@ -252,7 +253,7 @@ export function Modal({ open, onClose, title, children, wide = false }) {
         {title && (
           <div className="mb-5 flex items-center justify-between gap-3">
             <h2 className="display text-[24px]">{title}</h2>
-            <button type="button" onClick={onClose} aria-label="Close" className="-mr-2 grid h-11 w-11 place-items-center rounded-full text-ink-3 hover:bg-sunk hover:text-ink">
+            <button type="button" onClick={onClose} aria-label={t('close')} className="-mr-2 grid h-11 w-11 place-items-center rounded-full text-ink-3 hover:bg-sunk hover:text-ink">
               <Icon.Plus className="rotate-45" />
             </button>
           </div>

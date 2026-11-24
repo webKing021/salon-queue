@@ -151,6 +151,24 @@ barber phone, TV on a small screen, a wrong URL) and screenshotted every step. P
 
 ---
 
+### 10. Final check against the guide
+> Read the instructions guide PDF one final time and check that nothing is missing: features, screens or
+> anything else. If something is left, complete it.
+
+**What the agent did:** it went through all 9 pages of the guide and checked each item against the app:
+the 4 documents, all 7 screens, every rule, the 10-item test checklist, the README format, the first commit
+(docs only), prompts.md, the reflection and hosting. Two things were incomplete:
+- **44 px tap targets (Step 7):** a script measured every button and link on every phone screen. The language
+  toggle (40 px), the logo link, the reception "Online queue open" pill (31 px), the barber name links on reception
+  cards (18 px tall) and the Settings "Edit"/"Add service" buttons were too small. All are 44 px now.
+- **Gujarati (Step 7):** two screen-reader labels (the pop-up close button and the TV QR code) were still hard-coded
+  in English. Both are translated now. The same script found no other English in Gujarati mode except names, the
+  course code and the English service names that the owner edits on Settings.
+- Checklist item "Waiting time goes down as customers finish" had no automatic test, so it was checked:
+  90 → 60 → 30 → 0 min for the 4th customer with one barber.
+
+---
+
 ## Prompts I'll use if something breaks (from the guide)
 - **Bug:** "On `<screen>`, I did `<action>`, and `<what happened>`. Expected: `<what should happen>`. Explain the cause first, then fix it."
 - **Verify:** "Go through the test checklist in `docs/03-flows-rules.md`. For each item say pass/fail and how you checked it."

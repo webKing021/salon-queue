@@ -268,4 +268,5 @@ export default {
   notFoundPage: 'આ પેજ અસ્તિત્વમાં નથી.',
   tvJoinShort: 'ફોનથી જોડાવા સ્કેન કરો',
   closedBoard: ({ time }) => `હમણાં બંધ છે. કતાર ${time} વાગ્યે ખૂલશે.`,
+  qrAlt: 'કતારમાં જોડાવા માટે QR કોડ',
 };

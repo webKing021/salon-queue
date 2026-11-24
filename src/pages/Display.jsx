@@ -174,7 +174,7 @@ export default function Display() {
               <Icon.Sound /> {t('tapSound')}
             </span>
           )}
-          {qr && <img src={qr} alt="QR code to the join page" className="h-[11vh] w-[11vh] rounded-lg bg-white p-1" />}
+          {qr && <img src={qr} alt={t('qrAlt')} className="h-[11vh] w-[11vh] rounded-lg bg-white p-1" />}
         </div>
       </footer>
     </main>

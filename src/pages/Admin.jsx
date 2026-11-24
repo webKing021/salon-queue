@@ -101,7 +101,7 @@ function Settings() {
           <section className="panel self-start p-5">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-[18px] font-semibold text-ink">{t('servicesList')}</h2>
-              <button className="btn-outline min-h-10 text-sm" onClick={() => setEditing({})}>
+              <button className="btn-outline min-h-11 text-sm" onClick={() => setEditing({})}>
                 <Icon.Plus width={16} height={16} /> {t('addService')}
               </button>
             </div>
@@ -114,7 +114,7 @@ function Settings() {
                   </div>
                   <span className="w-16 text-right text-[14px] text-ink-3">{t('min', { n: s.minutes })}</span>
                   <span className="w-14 text-right font-semibold">₹{s.price}</span>
-                  <button className="btn-quiet min-h-10 px-2 text-sm" onClick={() => setEditing(s)}>{t('edit')}</button>
+                  <button className="btn-quiet min-h-11 min-w-11 px-2.5 text-sm" onClick={() => setEditing(s)}>{t('edit')}</button>
                   <Toggle on={s.active} label={s.nameEn} onChange={(v) => run('toggleService', { id: s.id, value: v })} />
                 </li>
               ))}
