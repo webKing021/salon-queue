@@ -2,7 +2,7 @@
 
 **Live demo:** https://salon-queue-krutarth078.vercel.app
 
-**Hosted on:** Vercel (frontend + one serverless API function) · SQLite database
+**Hosted on:** Vercel (frontend + one serverless API function) · SQLite (Turso free tier)
 
 **Staff PIN (Reception / Barber / Admin):** `1234`
 
@@ -52,11 +52,12 @@ Built as a vibe coding project for IT603 – Intro to Programming (MSc IT, Sem 1
 - Labels: `src/i18n/en.js` and `src/i18n/gu.js`
 
 ### About storage on Vercel
-Vercel functions can't keep a file forever, so on the live link the SQLite file lives in
-`/tmp`. It works for demos, but the queue can reset after the site has been idle for a while
-(it starts again with the default services and barbers). To keep data permanently for free,
-add **Turso** (hosted SQLite, free tier) from Vercel → Storage / Marketplace and set
-`TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. The app switches to it automatically, with no code changes.
+Vercel functions can't keep a file forever. Without extra setup the SQLite file lives in
+`/tmp`, which is fine for light use, but each Vercel instance has its own copy: the queue can
+reset after the site sits idle, and under bursts of traffic two devices can see different queues.
+For the live link the same SQLite schema runs on **Turso** (hosted SQLite, free tier), connected
+from Vercel → Storage, which sets `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. The app picks it up
+automatically, with no code changes. Both paths pass the same 28-check test script.
 
 ## Run locally
 Needs Node.js 22.13 or newer (for the built-in `node:sqlite`).

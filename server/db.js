@@ -76,12 +76,14 @@ const SERVICES = [
 
 const clean = (args) => args.map((a) => (a === undefined ? null : typeof a === 'boolean' ? Number(a) : a));
 
+const TURSO_URL = process.env.TURSO_DATABASE_URL || process.env.TURSO_URL || process.env.LIBSQL_URL;
+const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || process.env.LIBSQL_AUTH_TOKEN;
+
 async function makeTurso() {
-  const { createClient } = await import('@libsql/client/web');
-  const client = createClient({
-    url: process.env.TURSO_DATABASE_URL,
-    authToken: process.env.TURSO_AUTH_TOKEN,
-  });
+  // Remote Turso uses the pure-JS web client. A "file:" URL uses the Node client
+  // (only for testing this code path locally).
+  const { createClient } = TURSO_URL.startsWith('file:') ? await import('@libsql/client') : await import('@libsql/client/web');
+  const client = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
   const toObjects = (rs) => rs.rows.map((r) => Object.fromEntries(rs.columns.map((c, i) => [c, r[i]])));
   return {
     kind: 'turso',
@@ -144,7 +146,7 @@ async function setup(db) {
 let ready = null;
 export function getDb() {
   if (!ready) {
-    ready = (process.env.TURSO_DATABASE_URL ? makeTurso() : makeFile()).then(setup).catch((err) => {
+    ready = (TURSO_URL ? makeTurso() : makeFile()).then(setup).catch((err) => {
       ready = null;
       throw err;
     });
