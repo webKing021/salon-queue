@@ -1,0 +1,91 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-coal: #1f2937;
+  --color-coal-deep: #161d28;
+  --color-coal-up: #273244;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-gold: #d4a017;
+  --color-gold-soft: #e8c768;
+  --color-gold-ink: #2a2006;
+  --color-ivory: #f4efe6;
+  --color-mute: #9aa3b2;
+  --color-faint: #6b7586;
+  --color-mint: #5fbf8a;
+  --color-amber: #e8a33d;
+  --color-rose: #e07070;
+
+  --font-display: 'Fraunces', 'Hind Vadodara', Georgia, serif;
+  --font-sans: 'Manrope', 'Hind Vadodara', system-ui, sans-serif;
+  --font-gu: 'Hind Vadodara', 'Manrope', system-ui, sans-serif;
+
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --animate-shake: shake 0.4s ease-in-out;
+  --animate-flash: flash-gold 1s ease-in-out 5;
+  --animate-rise: rise 0.35s ease-out both;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+@keyframes flash-gold {
+  0%, 100% { background-color: var(--color-coal-deep); color: var(--color-ivory); }
+  50% { background-color: var(--color-gold); color: var(--color-gold-ink); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@layer base {
+  html { background: var(--color-coal); color-scheme: dark; }
+  body {
+    @apply bg-coal text-ivory font-sans antialiased;
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html:lang(gu) body { font-family: var(--font-gu); }
+  button, a, input, select { touch-action: manipulation; }
+  :focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
+  input[type='number']::-webkit-inner-spin-button { opacity: 0.4; }
+}
+
+@utility card {
+  @apply rounded-2xl border border-line bg-coal-deep;
+}
+@utility btn {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-[15px] font-semibold
+    transition-[background-color,border-color,color,transform] duration-150 active:scale-[0.98]
+    disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100;
+}
+@utility btn-gold { @apply btn bg-gold text-gold-ink hover:bg-gold-soft; }
+@utility btn-ghost { @apply btn border border-line-strong text-ivory hover:border-gold/60 hover:text-gold-soft; }
+@utility btn-quiet { @apply btn text-mute hover:text-ivory; }
+@utility btn-danger { @apply btn border border-rose/40 text-rose hover:bg-rose/10; }
+@utility btn-mint { @apply btn bg-mint text-[#0d2418] hover:brightness-110; }
+@utility field {
+  @apply min-h-12 w-full rounded-xl border border-line-strong bg-coal px-4 text-base text-ivory
+    placeholder:text-faint focus:border-gold focus:outline-none;
+}
+@utility label { @apply mb-1.5 block text-[13px] font-semibold tracking-wide text-mute; }
+@utility eyebrow {
+  @apply text-[11px] font-bold uppercase tracking-[0.18em] text-faint;
+  &:where(:lang(gu) *) { @apply text-[13px] normal-case tracking-normal; }
+}
+@utility token {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+@utility rule-double {
+  height: 5px;
+  border-top: 1px solid var(--color-gold);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-gold) 45%, transparent);
+}
