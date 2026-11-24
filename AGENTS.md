@@ -28,7 +28,9 @@ and get called; reception and barbers manage the queue; a TV shows who's next.
 ## How to work
 - One screen or one feature per task. Don't touch other screens.
 - Show your plan and the files you'll create for big steps; wait for my OK.
-- Theme: charcoal (#1F2937) + gold (#D4A017); rounded cards; mobile-first.
+- Theme (v3): porcelain #F3F4F1 page, white surfaces, pole navy #1E2A5A (structure, main buttons),
+  pole red #C8322B only for "now / your turn". Font: Anek Latin + Anek Gujarati. Mobile-first.
+  No all-caps labels, no middle-dot strings, no arrows on buttons, sentence case.
 - All labels via the EN/GU language file (`src/i18n`); no hard-coded text.
 - Queue rules (who's next, position, waiting time, status changes) live in ONE
   file (`src/lib/queueRules.js`) and are reused everywhere.

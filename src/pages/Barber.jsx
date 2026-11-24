@@ -49,7 +49,7 @@ function BarberScreen() {
             to={`/barber/${b.id}`}
             aria-current={on ? 'page' : undefined}
             className={`flex min-h-12 shrink-0 items-center gap-2 rounded-full border py-1 pr-4 pl-1 text-[15px] font-bold transition-colors ${
-              on ? 'border-gold bg-gold text-gold-ink' : 'border-line-strong text-ivory hover:border-gold/50'
+              on ? 'border-navy bg-navy text-white' : 'border-line-strong text-ink hover:border-navy/50'
             }`}
           >
             <Avatar barber={b} size={36} />
@@ -65,7 +65,7 @@ function BarberScreen() {
     return (
       <main className="mx-auto max-w-xl px-4 py-6">
         <h1 className="mb-1 text-[22px] font-bold">{t('allBarbers')}</h1>
-        {name && <p className="mb-3 text-mute">{t('barberNotFound')}</p>}
+        {name && <p className="mb-3 text-ink-3">{t('barberNotFound')}</p>}
         <div className="mt-4">{switcher}</div>
       </main>
     );
@@ -95,9 +95,9 @@ function BarberScreen() {
 
       <section className="mb-5 flex items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-[32px] leading-tight font-medium">{names.barber(barber)}</h1>
+          <h1 className="display text-[32px] leading-tight font-medium">{names.barber(barber)}</h1>
           <p className={`flex items-center gap-1.5 text-[14px] font-semibold ${STATE_TEXT[st]}`}>
-            <Dot state={st} /> {t(`st_${st}`)} <span className="text-mute">· {t('servedToday', { n: served })}</span>
+            <Dot state={st} /> {t(`st_${st}`)}<span className="text-ink-3">, {t('servedToday', { n: served })}</span>
           </p>
         </div>
       </section>
@@ -113,7 +113,7 @@ function BarberScreen() {
             aria-pressed={barber.onBreak === val}
             onClick={() => barber.onBreak !== val && run('setBreak', { barberId: barber.id, value: val })}
             className={`flex min-h-12 items-center justify-center gap-2 rounded-xl text-[15px] font-bold transition-colors ${
-              barber.onBreak === val ? (val ? 'bg-coal-high text-ivory' : 'bg-mint text-[#0d2418]') : 'text-mute'
+              barber.onBreak === val ? (val ? 'bg-ink text-ink' : 'bg-green text-white') : 'text-ink-3'
             }`}
           >
             {val && <Icon.Coffee />}
@@ -122,56 +122,56 @@ function BarberScreen() {
         ))}
       </div>
 
-      {!barber.onDuty && <p className="mb-4 rounded-xl bg-white/5 px-4 py-3 text-center text-mute">{t('err_offDuty')}</p>}
+      {!barber.onDuty && <p className="mb-4 rounded-xl bg-sunk px-4 py-3 text-center text-ink-3">{t('err_offDuty')}</p>}
 
-      <section className={`mb-4 rounded-2xl p-5 ${cur ? 'ticket' : 'card'}`} style={{ '--notch': 'var(--color-coal)' }}>
-        <p className={`mb-2 text-[12px] font-bold uppercase tracking-[0.14em] [:lang(gu)_&]:tracking-normal ${cur ? 'text-ink-soft' : 'text-faint'}`}>{t('current')}</p>
+      <section className={`mb-4 rounded-2xl p-5 ${cur ? (cur.status === STATUS.CALLED ? 'bg-red text-white' : 'bg-navy text-white') : 'panel'}`}>
+        <p className={`mb-2 text-[15px] font-medium ${cur ? 'text-white/70' : 'text-ink-3'}`}>{t('current')}</p>
         {cur ? (
           <>
             <div className="flex items-end justify-between gap-3">
-              <p className="token text-[72px] text-ink">S-{cur.token}</p>
+              <p className="num text-[88px]">S-{cur.token}</p>
               {cur.status === STATUS.IN_CHAIR ? (
-                <p className="token text-[40px] text-ink">{mmss(now - cur.startedAt)}</p>
+                <p className="num text-[44px]">{mmss(now - cur.startedAt)}</p>
               ) : (
-                <p className="mb-2 rounded-full bg-gold px-3 py-1 text-[13px] font-bold text-gold-ink">{t('waitingToArrive')}</p>
+                <p className="mb-2 rounded-full bg-white px-3 py-1 text-[14px] font-semibold text-red">{t('waitingToArrive')}</p>
               )}
             </div>
             <p className="mt-2 text-[20px] font-bold">{cur.name}</p>
-            <p className="mt-0.5 text-[15px] text-ink-soft">
-              {cur.services.map((s) => names.service(s)).join(' · ')} · {t('min', { n: cur.totalMin })}
+            <p className="mt-0.5 text-[15px] text-white/75">
+              {cur.services.map((s) => names.service(s)).join(', ')}, {t('min', { n: cur.totalMin })}
             </p>
           </>
         ) : (
-          <p className="py-3 text-[18px] text-mute">{barber.onBreak ? t('onBreakBanner') : t('noOneWaitingForYou')}</p>
+          <p className="py-3 text-[18px] text-ink-3">{barber.onBreak ? t('onBreakBanner') : t('noOneWaitingForYou')}</p>
         )}
       </section>
 
       {cur?.status === STATUS.CALLED && (
-        <button className="btn-gold mb-4 min-h-16 w-full rounded-2xl text-[20px]" onClick={() => run('start', { id: cur.id })}>
+        <button className="btn-primary mb-4 min-h-16 w-full rounded-2xl text-[20px]" onClick={() => run('start', { id: cur.id })}>
           {t('start')}
         </button>
       )}
       {cur?.status === STATUS.IN_CHAIR && (
-        <button className="btn-mint mb-4 min-h-16 w-full rounded-2xl text-[20px]" onClick={() => run('done', { id: cur.id })}>
+        <button className="btn-green mb-4 min-h-16 w-full rounded-2xl text-[20px]" onClick={() => run('done', { id: cur.id })}>
           <Icon.Check width={22} height={22} /> {t('done')}
         </button>
       )}
       {!cur && (
-        <button className="btn-gold mb-4 min-h-16 w-full rounded-2xl text-[20px]" disabled={!check.ok} onClick={() => run('callNext', { barberId: barber.id })}>
+        <button className="btn-primary mb-4 min-h-16 w-full rounded-2xl text-[20px]" disabled={!check.ok} onClick={() => run('callNext', { barberId: barber.id })}>
           {t('callNext')}
         </button>
       )}
 
       <section className="rounded-2xl border border-dashed border-line-strong px-5 py-4">
-        <p className="eyebrow mb-1.5">{t('nextForYou')}</p>
+        <p className="text-[14px] font-medium text-ink-3 mb-1.5">{t('nextForYou')}</p>
         {upcoming ? (
           <p className="text-[17px]">
-            <span className="token mr-2 text-[26px] text-gold">S-{upcoming.token}</span>
+            <span className="num mr-2 text-[26px] text-navy">S-{upcoming.token}</span>
             <span className="font-bold">{upcoming.name.split(' ')[0]}</span>
-            <span className="text-mute"> ({upcoming.services.map((s) => names.service(s)).join(', ')})</span>
+            <span className="text-ink-3"> ({upcoming.services.map((s) => names.service(s)).join(', ')})</span>
           </p>
         ) : (
-          <p className="text-mute">{t('noOneWaitingForYou')}</p>
+          <p className="text-ink-3">{t('noOneWaitingForYou')}</p>
         )}
       </section>
       {toastNode}

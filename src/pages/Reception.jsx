@@ -74,26 +74,26 @@ function Dashboard() {
       {/* Toolbar */}
       <div className="mb-5 flex flex-wrap items-center gap-x-4 gap-y-3">
         <h1 className="text-[22px] font-bold">{t('reception')}</h1>
-        <span className="token text-[26px] text-mute">{clockText(now)}</span>
+        <span className="num text-[26px] text-ink-3">{clockText(now)}</span>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-white/6 px-3 py-1.5 text-[13px] font-bold">{t('waitingN', { n: waiting.length })}</span>
-          <span className="rounded-full bg-white/6 px-3 py-1.5 text-[13px] font-semibold text-mute">{t('newWalkInWait', { n: newWait })}</span>
+          <span className="rounded-full bg-sunk px-3 py-1.5 text-[13px] font-bold">{t('waitingN', { n: waiting.length })}</span>
+          <span className="rounded-full bg-sunk px-3 py-1.5 text-[13px] font-semibold text-ink-3">{t('newWalkInWait', { n: newWait })}</span>
           <Link
             to="/admin"
             className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold ${
-              settings.onlineOpen ? 'bg-mint/12 text-mint' : 'bg-amber/12 text-amber'
+              settings.onlineOpen ? 'bg-green-soft text-green' : 'bg-amber-soft text-amber'
             }`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${settings.onlineOpen ? 'bg-mint' : 'bg-amber'}`} />
+            <span className={`h-1.5 w-1.5 rounded-full ${settings.onlineOpen ? 'bg-green' : 'bg-amber'}`} />
             {settings.onlineOpen ? t('onlineOpenPill') : t('onlineClosedPill')}
           </Link>
         </div>
-        <button className="btn-gold min-h-12 w-full px-5 sm:ml-auto sm:w-auto" onClick={() => setWalkIn(true)}>
+        <button className="btn-primary min-h-12 w-full px-5 sm:ml-auto sm:w-auto" onClick={() => setWalkIn(true)}>
           <Icon.Plus /> {t('addWalkIn')}
         </button>
       </div>
 
-      {/* Barbers: one card each, 3 in a row on tablet */}
+      {/* Barbers: one panel each, 3 in a row on tablet */}
       <section className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {onDuty.map((b) => (
           <BarberCard key={b.id} barber={b} spots={spots} now={now} t={t} names={names} run={run} onNoShow={(spot) => setConfirm({ kind: 'noShow', spot })} />
@@ -111,10 +111,10 @@ function Dashboard() {
           )}
         </div>
         {waiting.length === 0 ? (
-          <div className="card grid min-h-40 place-items-center px-6 text-center font-display text-2xl text-mute">{t('nobodyWaiting')}</div>
+          <div className="panel grid min-h-40 place-items-center px-6 text-center display text-2xl text-ink-3">{t('nobodyWaiting')}</div>
         ) : (
-          <div className="card overflow-hidden">
-            <div className="hidden grid-cols-[76px_1.4fr_1.6fr_1fr_90px_90px_100px] gap-3 border-b border-line px-4 py-2.5 text-[12px] font-bold text-faint lg:grid">
+          <div className="panel overflow-hidden">
+            <div className="hidden grid-cols-[76px_1.4fr_1.6fr_1fr_90px_90px_100px] gap-3 border-b border-line px-4 py-2.5 text-[12px] font-bold text-ink-3 lg:grid">
               <span>{t('colToken')}</span>
               <span>{t('colName')}</span>
               <span>{t('colServices')}</span>
@@ -132,23 +132,23 @@ function Dashboard() {
                   <li
                     key={s.id}
                     className={`grid grid-cols-[64px_1fr_auto] items-center gap-x-3 gap-y-1 px-4 py-3 lg:grid-cols-[76px_1.4fr_1.6fr_1fr_90px_90px_100px] ${
-                      long ? 'bg-amber/12' : ''
+                      long ? 'bg-amber-soft' : ''
                     }`}
                   >
-                    <span className="token row-span-3 text-[32px] text-gold lg:row-span-1">S-{s.token}</span>
+                    <span className="num row-span-3 text-[32px] text-navy lg:row-span-1">S-{s.token}</span>
                     <span className="min-w-0">
                       <span className="block truncate text-[15px] font-bold">{s.name}</span>
-                      {s.walkIn && <span className="mt-0.5 inline-block rounded bg-white/8 px-1.5 py-0.5 text-[11px] font-bold text-mute">{t('walkInTag')}</span>}
+                      {s.walkIn && <span className="mt-0.5 inline-block rounded bg-sunk px-1.5 py-0.5 text-[11px] font-bold text-ink-3">{t('walkInTag')}</span>}
                     </span>
-                    <span className="col-start-2 truncate text-[13px] text-mute lg:col-start-auto lg:text-[14px] lg:text-ivory">
+                    <span className="col-start-2 truncate text-[13px] text-ink-3 lg:col-start-auto lg:text-[14px] lg:text-ink">
                       {s.services.map((x) => names.service(x)).join(', ')}
                     </span>
                     <span className="col-start-2 text-[13px] lg:col-start-auto lg:text-[14px]">
-                      {s.prefBarber ? <span className="font-semibold">{barberName(s.prefBarber)}</span> : <span className="text-mute">{t('anyBarber')}</span>}
-                      <span className="text-mute lg:hidden"> · {t('joinedAgo', { n: waited })} · {t('estShort', { n: eta.wait })}</span>
+                      {s.prefBarber ? <span className="font-semibold">{barberName(s.prefBarber)}</span> : <span className="text-ink-3">{t('anyBarber')}</span>}
+                      <span className="text-ink-3 lg:hidden">, {t('joinedAgo', { n: waited })}, {t('estShort', { n: eta.wait })}</span>
                     </span>
-                    <span className={`hidden text-[14px] font-semibold lg:block ${long ? 'text-amber' : 'text-mute'}`}>{t('min', { n: waited })}</span>
-                    <span className="hidden text-[14px] text-mute lg:block">{t('estShort', { n: eta.wait })}</span>
+                    <span className={`hidden text-[14px] font-semibold lg:block ${long ? 'text-amber' : 'text-ink-3'}`}>{t('min', { n: waited })}</span>
+                    <span className="hidden text-[14px] text-ink-3 lg:block">{t('estShort', { n: eta.wait })}</span>
                     <span className="col-start-3 row-span-3 row-start-1 justify-self-end lg:col-start-auto lg:row-span-1 lg:row-start-auto">
                       <button className="btn-danger min-h-11 px-3 text-sm" onClick={() => setConfirm({ kind: 'cancel', spot: s })}>
                         {t('cancel')}
@@ -195,48 +195,48 @@ function BarberCard({ barber, spots, now, t, names, run, onNoShow }) {
   const calledMins = cur?.calledAt ? minsSince(cur.calledAt, now) : 0;
 
   return (
-    <article className={`card flex flex-col p-4 ${cur ? 'border-gold/30' : ''}`}>
+    <article className={`panel flex flex-col p-4 ${cur ? 'border-navy/30' : ''}`}>
       <header className="mb-3 flex items-center gap-3">
-        <Avatar barber={barber} size={42} ring={Boolean(cur)} />
+        <Avatar barber={barber} size={42} ring={cur?.status === STATUS.CALLED} />
         <div className="min-w-0 flex-1">
-          <Link to={`/barber/${barber.id}`} className="text-[17px] font-bold hover:text-gold-soft">{names.barber(barber)}</Link>
+          <Link to={`/barber/${barber.id}`} className="text-[17px] font-bold hover:text-navy">{names.barber(barber)}</Link>
           <p className={`flex items-center gap-1.5 text-[13px] font-semibold ${STATE_TEXT[st]}`}>
             <Dot state={st} /> {t(`st_${st}`)}
           </p>
         </div>
       </header>
 
-      <div className="min-h-[92px] flex-1 rounded-xl bg-coal-deep px-3.5 py-3">
+      <div className="min-h-[92px] flex-1 rounded-xl bg-sunk px-3.5 py-3">
         {cur && cur.status === STATUS.IN_CHAIR && (
           <>
             <div className="flex items-baseline justify-between gap-3">
               <p className="min-w-0 truncate">
-                <span className="token mr-2 text-[24px] text-gold">S-{cur.token}</span>
+                <span className="num mr-2 text-[24px] text-navy">S-{cur.token}</span>
                 <span className="text-[15px] font-semibold">{cur.name}</span>
               </p>
             </div>
-            <p className="mt-0.5 truncate text-[13px] text-mute">{cur.services.map((x) => names.service(x)).join(', ')}</p>
+            <p className="mt-0.5 truncate text-[13px] text-ink-3">{cur.services.map((x) => names.service(x)).join(', ')}</p>
             <TimeLeft spot={cur} now={now} t={t} />
           </>
         )}
         {cur && cur.status === STATUS.CALLED && (
           <>
-            <p className="text-[15px] font-bold text-gold-soft">{t('calledAgo', { token: `S-${cur.token}`, n: calledMins })}</p>
-            <p className="truncate text-[13px] text-mute">{cur.name} · {cur.services.map((x) => names.service(x)).join(', ')}</p>
+            <p className="text-[15px] font-bold text-navy">{t('calledAgo', { token: `S-${cur.token}`, n: calledMins })}</p>
+            <p className="truncate text-[13px] text-ink-3">{cur.name}, {cur.services.map((x) => names.service(x)).join(', ')}</p>
             {calledMins < NO_SHOW_AFTER_MIN && (
-              <p className="mt-2 text-[12px] text-faint">{t('noShowIn', { n: NO_SHOW_AFTER_MIN - calledMins })}</p>
+              <p className="mt-2 text-[12px] text-ink-3">{t('noShowIn', { n: NO_SHOW_AFTER_MIN - calledMins })}</p>
             )}
           </>
         )}
         {!cur && (
-          <p className="text-[14px] text-mute">
+          <p className="text-[14px] text-ink-3">
             {st === 'break' ? (
               t('onBreakBanner')
             ) : check.ok ? (
               <>
-                <span className="block text-[12px] font-bold text-faint">{t('nextForYou')}</span>
-                <span className="token mr-2 text-[24px] text-ivory">S-{check.spot.token}</span>
-                <span className="font-semibold text-ivory">{check.spot.name.split(' ')[0]}</span>
+                <span className="block text-[12px] font-bold text-ink-3">{t('nextForYou')}</span>
+                <span className="num mr-2 text-[24px] text-ink">S-{check.spot.token}</span>
+                <span className="font-semibold text-ink">{check.spot.name.split(' ')[0]}</span>
               </>
             ) : (
               t('noOneForYou')
@@ -247,20 +247,20 @@ function BarberCard({ barber, spots, now, t, names, run, onNoShow }) {
 
       <div className="mt-3 grid grid-cols-2 gap-2">
         {!cur && (
-          <button className="btn-gold col-span-2 min-h-12" disabled={!check.ok} onClick={() => run('callNext', { barberId: barber.id })}>
+          <button className="btn-primary col-span-2 min-h-12" disabled={!check.ok} onClick={() => run('callNext', { barberId: barber.id })}>
             {t('callNext')}
           </button>
         )}
         {cur?.status === STATUS.CALLED && (
           <>
-            <button className="btn-gold min-h-12" onClick={() => run('start', { id: cur.id })}>{t('start')}</button>
+            <button className="btn-primary min-h-12" onClick={() => run('start', { id: cur.id })}>{t('start')}</button>
             <button className="btn-danger min-h-12" disabled={calledMins < NO_SHOW_AFTER_MIN} onClick={() => onNoShow(cur)}>
               {t('noShow')}
             </button>
           </>
         )}
         {cur?.status === STATUS.IN_CHAIR && (
-          <button className="btn-mint col-span-2 min-h-12" onClick={() => run('done', { id: cur.id })}>{t('done')}</button>
+          <button className="btn-green col-span-2 min-h-12" onClick={() => run('done', { id: cur.id })}>{t('done')}</button>
         )}
       </div>
     </article>
@@ -272,10 +272,10 @@ function TimeLeft({ spot, now, t }) {
   const frac = Math.min(1, (now - spot.startedAt) / (spot.totalMin * 60000));
   return (
     <div className="mt-2.5">
-      <div className="h-2 overflow-hidden rounded-full bg-white/8">
-        <div className={`h-full rounded-full transition-[width] duration-1000 ${left === 0 ? 'bg-amber' : 'bg-gold'}`} style={{ width: `${frac * 100}%` }} />
+      <div className="h-2 overflow-hidden rounded-full bg-white ring-1 ring-line-strong">
+        <div className={`h-full rounded-full transition-[width] duration-1000 ${left === 0 ? 'bg-amber' : 'bg-navy'}`} style={{ width: `${frac * 100}%` }} />
       </div>
-      <p className={`mt-1.5 text-right text-[12px] font-bold ${left === 0 ? 'text-amber' : 'text-mute'}`}>
+      <p className={`mt-1.5 text-right text-[12px] font-bold ${left === 0 ? 'text-amber' : 'text-ink-3'}`}>
         {left === 0 ? t('overTime') : t('timeLeft', { n: left })}
       </p>
     </div>

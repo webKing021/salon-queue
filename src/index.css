@@ -1,129 +1,132 @@
 @import 'tailwindcss';
 
+/*
+  Royal Cuts — design tokens (v3)
+  Barber-pole colours on porcelain tile. See docs/02-screens.md "Look & navigation".
+*/
 @theme {
-  /* Brand: charcoal #1F2937 + gold #D4A017 (AGENTS.md) */
-  --color-coal: #1f2937;
-  --color-coal-deep: #18202b;
-  --color-coal-up: #263243;
-  --color-coal-high: #2e3b4e;
-  --color-line: rgb(255 255 255 / 0.07);
-  --color-line-strong: rgb(255 255 255 / 0.15);
-  --color-gold: #d4a017;
-  --color-gold-soft: #e9c968;
-  --color-gold-ink: #261c03;
-  --color-paper: #f5efe3;
-  --color-paper-dim: #e7ddca;
-  --color-ink: #1b2330;
-  --color-ink-soft: #5b6472;
-  --color-ivory: #f4efe6;
-  --color-mute: #a1a9b6;
-  --color-faint: #6f7987;
-  --color-mint: #62c08e;
-  --color-amber: #eaa53e;
-  --color-rose: #e3726f;
+  --color-page: #f3f4f1; /* porcelain tile */
+  --color-surface: #ffffff;
+  --color-sunk: #e9ebe6; /* insets, tracks */
+  --color-line: #dcdfe3;
+  --color-line-strong: #c3c8d0;
 
-  --font-display: 'Fraunces', 'Hind Vadodara', Georgia, serif;
-  --font-sign: 'Big Shoulders Display', 'Hind Vadodara', 'Arial Narrow', sans-serif;
-  --font-sans: 'Manrope', 'Hind Vadodara', system-ui, sans-serif;
-  --font-gu: 'Hind Vadodara', 'Manrope', system-ui, sans-serif;
+  --color-ink: #161a26; /* text */
+  --color-ink-2: #474e5e; /* secondary text */
+  --color-ink-3: #767d8c; /* muted text */
 
-  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --color-navy: #1e2a5a; /* pole navy: structure + main actions */
+  --color-navy-2: #2a3a78; /* hover */
+  --color-navy-deep: #131a3a; /* TV board */
+  --color-navy-soft: #e6e9f3;
+
+  --color-red: #c8322b; /* pole red: "now" moments only */
+  --color-red-2: #a92822;
+  --color-red-soft: #fbe8e6;
+
+  --color-green: #1d7f55;
+  --color-green-soft: #e1f1e8;
+  --color-amber: #9a6210;
+  --color-amber-soft: #fbefd9;
+
+  --font-sans: 'Anek Latin', 'Anek Gujarati', system-ui, sans-serif;
+
   --animate-shake: shake 0.4s ease-in-out;
-  --animate-flash: flash-gold 1s ease-in-out 5;
-  --animate-rise: rise 0.35s ease-out both;
+  --animate-flash: flash-red 1s ease-in-out 5;
+  --animate-rise: rise 0.3s ease-out both;
+  --animate-pole: pole-spin 1.6s linear infinite;
+  --animate-beat: beat 2.2s ease-in-out infinite;
 }
 
-@keyframes pulse-soft {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.035); }
-}
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-8px); }
   40%, 80% { transform: translateX(8px); }
 }
-@keyframes flash-gold {
-  0%, 100% { background-color: var(--color-coal-deep); color: var(--color-ivory); }
-  50% { background-color: var(--color-gold); color: var(--color-gold-ink); }
+@keyframes flash-red {
+  0%, 100% { background-color: var(--flash-from, transparent); }
+  50% { background-color: var(--color-red); }
 }
 @keyframes rise {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
+}
+@keyframes pole-spin {
+  from { background-position: 0 0; }
+  to { background-position: 0 -32px; }
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
 @layer base {
-  html { background: var(--color-coal); color-scheme: dark; }
+  html { background: var(--color-page); }
   body {
-    @apply bg-coal text-ivory font-sans antialiased;
+    @apply bg-page text-ink font-sans antialiased;
     min-height: 100dvh;
+    font-size: 16px;
+    line-height: 1.45;
     -webkit-tap-highlight-color: transparent;
+    font-feature-settings: 'tnum' 1;
   }
-  html:lang(gu) body { font-family: var(--font-gu); }
   button, a, input, select { touch-action: manipulation; }
-  :focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid color-mix(in oklab, var(--color-navy) 55%, white); outline-offset: 2px; }
+  ::selection { background: var(--color-navy); color: white; }
 }
 
-@utility card {
-  @apply rounded-2xl border border-line bg-coal-up/60;
-}
-@utility btn {
-  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-[15px] font-semibold
-    transition-[background-color,border-color,color,transform,opacity] duration-150 active:scale-[0.98]
-    disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100;
-}
-@utility btn-gold { @apply btn bg-gold text-gold-ink hover:bg-gold-soft; }
-@utility btn-ghost { @apply btn border border-line-strong text-ivory hover:border-gold/60 hover:text-gold-soft; }
-@utility btn-quiet { @apply btn text-mute hover:text-ivory; }
-@utility btn-danger { @apply btn border border-rose/40 text-rose hover:bg-rose/10; }
-@utility btn-mint { @apply btn bg-mint text-[#0d2418] hover:brightness-110; }
-@utility field {
-  @apply min-h-12 w-full rounded-xl border border-line-strong bg-coal-deep px-4 text-base text-ivory
-    placeholder:text-faint focus:border-gold focus:outline-none;
-}
-@utility label { @apply mb-1.5 block text-[13px] font-semibold text-mute; }
-@utility eyebrow {
-  @apply text-[11px] font-bold uppercase tracking-[0.16em] text-faint;
-  &:where(:lang(gu) *) { @apply text-[13px] normal-case tracking-normal; }
-}
-/* Signage numerals for tokens and counts */
-@utility token {
-  font-family: var(--font-sign);
+/* ---------- type ---------- */
+/* Token numbers: condensed extra-bold, like counter signage */
+@utility num {
+  font-stretch: 75%;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
-  line-height: 0.9;
+  letter-spacing: -0.01em;
+  line-height: 0.86;
 }
-/* Gold hairline at the top of every screen */
-@utility pole {
-  height: 3px;
-  background: linear-gradient(90deg, color-mix(in oklab, var(--color-gold) 35%, transparent), var(--color-gold) 30%, var(--color-gold) 70%, color-mix(in oklab, var(--color-gold) 35%, transparent));
+/* Salon name / big headings: semi-expanded */
+@utility display {
+  font-stretch: 112%;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
-/* Paper ticket */
-@utility ticket {
-  @apply rounded-[22px] bg-paper text-ink;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.5) inset, 0 18px 40px -18px rgb(0 0 0 / 0.6);
+
+/* ---------- surfaces ---------- */
+@utility panel {
+  @apply rounded-2xl border border-line bg-surface;
 }
-/* Perforated tear line with side notches; set --notch to the background behind the ticket */
-@utility perf {
-  position: relative;
-  height: 0;
-  margin-inline: 18px;
-  border-top: 2px dashed color-mix(in oklab, var(--color-ink) 22%, transparent);
-  &::before, &::after {
-    content: '';
-    position: absolute;
-    top: -12px;
-    width: 22px;
-    height: 22px;
-    border-radius: 999px;
-    background: var(--notch, var(--color-coal));
-  }
-  &::before { left: -30px; }
-  &::after { right: -30px; }
+
+/* ---------- buttons ---------- */
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-[16px] font-semibold
+    transition-[background-color,border-color,color,box-shadow,transform] duration-150 active:scale-[0.985]
+    disabled:cursor-not-allowed disabled:opacity-35 disabled:active:scale-100;
 }
-@utility leaders {
-  flex: 1;
-  min-width: 12px;
-  border-bottom: 1.5px dotted var(--color-line-strong);
-  transform: translateY(-4px);
+@utility btn-primary { @apply btn bg-navy text-white hover:bg-navy-2; }
+@utility btn-red { @apply btn bg-red text-white hover:bg-red-2; }
+@utility btn-green { @apply btn bg-green text-white hover:brightness-110; }
+@utility btn-outline { @apply btn border border-line-strong bg-surface text-ink hover:border-navy; }
+@utility btn-quiet { @apply btn text-ink-2 hover:bg-sunk hover:text-ink; }
+@utility btn-danger { @apply btn border border-line-strong bg-surface text-red hover:border-red hover:bg-red-soft; }
+
+@utility field {
+  @apply min-h-13 w-full rounded-xl border border-line-strong bg-surface px-4 text-[17px] text-ink
+    placeholder:text-ink-3 focus:border-navy focus:ring-3 focus:ring-navy/15 focus:outline-none;
+}
+@utility label { @apply mb-1.5 block text-[14px] font-semibold text-ink-2; }
+
+/* ---------- barber pole ---------- */
+@utility pole-stripes {
+  /* seamless 32px tile: red, white, navy, white, twice along the diagonal */
+  background-image: linear-gradient(
+    135deg,
+    var(--color-red) 0 12.5%, #fff 12.5% 25%, var(--color-navy) 25% 37.5%, #fff 37.5% 50%,
+    var(--color-red) 50% 62.5%, #fff 62.5% 75%, var(--color-navy) 75% 87.5%, #fff 87.5% 100%
+  );
+  background-size: 32px 32px;
 }

@@ -110,6 +110,26 @@ Updated `AGENTS.md` and the README **before** writing any code.
   a chosen barber counts only a fair share of the "Any" customers, and "Any" takes the fastest barber's time.
   Then the code, plus 2 new unit tests (13 total).
 
+### 8. Second redesign: new colours, built from the subject
+> The UI and colours still look really ugly. Find a good design skill on GitHub (or use your own), learn it,
+> and make the site look great, responsive on every screen size, and flexible. Think it through first.
+
+**What the agent did:** it read Anthropic's open `frontend-design` skill (github.com/anthropics/skills).
+The skill says to take the design from the subject itself and to avoid common "AI-made" looks: dark page with
+one bright accent, ALL-CAPS labels, "A · B · C" text, arrows on buttons. My charcoal + gold theme was the first
+of those. So the new look comes from a real barber shop:
+- **Colours of a barber pole:** porcelain-tile background, navy for structure and main buttons, red used only
+  for "now" moments (your turn, now calling).
+- **One font family, Anek**, which has both English and Gujarati, so both languages match. Condensed for token
+  numbers, wide for the salon name.
+- **One memorable element:** a barber pole that spins only while the salon is open, and fills up on your ticket
+  as your turn gets closer (replaced the countdown ring).
+- TV screen is a deep navy board; Home uses two columns on a laptop.
+- `AGENTS.md`, `01-brief.md` and `02-screens.md` were updated first, then the code.
+
+**Checked:** screenshots in English and Gujarati on phone, tablet, laptop and TV sizes with no sideways
+scrolling; 13/13 unit tests and the 28-check script still pass.
+
 ---
 
 ## Prompts I'll use if something breaks (from the guide)

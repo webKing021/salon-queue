@@ -30,5 +30,8 @@ first. The receptionist has no clear view of who is waiting for which barber.
 - Customer accounts / login (staff screens use a simple PIN only)
 
 ## Look & feel
-Premium salon feel: dark charcoal background with gold accents, rounded cards,
-clean and mobile-first. All labels available in English and Gujarati.
+Neighbourhood barber shop, not a tech dashboard: the colours of a barber pole (navy, red, white)
+on a light porcelain-tile background, one font family that has both English and Gujarati (Anek),
+and a spinning barber pole that shows the salon is open. Clean and mobile-first.
+All labels available in English and Gujarati.
+(v1 used charcoal + gold; changed after review because it looked like a generic dark dashboard.)

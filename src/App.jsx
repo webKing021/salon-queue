@@ -31,8 +31,8 @@ function NotFound() {
   return (
     <main className="grid min-h-dvh place-items-center px-6 text-center">
       <div>
-        <p className="token text-7xl text-gold">404</p>
-        <Link to="/" className="btn-ghost mt-6">{t('backHome')}</Link>
+        <p className="num text-7xl text-navy">404</p>
+        <Link to="/" className="btn-outline mt-6">{t('backHome')}</Link>
       </div>
     </main>
   );

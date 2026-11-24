@@ -7,7 +7,7 @@ const ordinal = (n) => {
 export default {
   salonName: 'Royal Cuts Salon',
   salonShort: 'Royal Cuts',
-  tagline: 'Hair · Beard · Spa',
+  tagline: 'Haircuts, beard and spa',
   langLabel: 'Language',
 
   // common
@@ -33,13 +33,13 @@ export default {
   st_off: 'Off duty',
 
   // home
-  openUntil: ({ time }) => `Open · Closes ${time}`,
-  closedNow: ({ time }) => `Closed · Opens ${time}`,
+  openUntil: ({ time }) => `Open now, until ${time}`,
+  closedNow: ({ time }) => `Closed now, opens at ${time}`,
   peopleWaiting: ({ n }) => (n === 1 ? '1 person waiting' : `${n} people waiting`),
-  nobodyWaiting: 'No one waiting — walk right in!',
+  nobodyWaiting: 'No one waiting. Walk right in.',
   waitApprox: ({ n }) => `about ${n} min`,
   barbersToday: 'Barbers today',
-  joinQueue: 'Join Queue',
+  joinQueue: 'Join the queue',
   viewMySpot: 'View my spot',
   alreadyIn: 'Already in the queue? See my status',
   onlineClosedMsg: 'Online queue is closed. Please visit the salon.',
@@ -47,7 +47,7 @@ export default {
   salonClosedMsg: ({ open }) => `The salon is closed now. Online queue opens at ${open}.`,
   liveNow: 'Live now',
   howItWorks: 'Join from your phone, relax wherever you like, come in when we tell you.',
-  credit: 'Lab project · IT603 Intro to Programming',
+  credit: 'IT603 Intro to Programming, lab project',
 
   // join
   joinTitle: 'Join the queue',
@@ -63,7 +63,7 @@ export default {
   maxServices: 'You can pick up to 3 services',
   pickBarber: 'Barber',
   fastest: 'Fastest',
-  summary: ({ min, price }) => `Total ${min} min · ₹${price}`,
+  summary: ({ min, price }) => `${min} min, ₹${price}`,
   expectedWait: ({ n }) => `Expected wait ~${n} min`,
   expectedNext: 'You’d be next',
   pickAService: 'Pick at least one service',
@@ -92,7 +92,7 @@ export default {
   yesCancel: 'Yes, cancel',
   yourTurn: 'It’s your turn!',
   goTo: ({ name }) => `Go to ${name}`,
-  inChair: ({ name }) => `You are with ${name} — enjoy!`,
+  inChair: ({ name }) => `You are with ${name}. Enjoy.`,
   thanks: 'Thank you! See you again',
   backHome: 'Back to Home',
   cancelledCard: 'This spot was cancelled.',
@@ -100,7 +100,7 @@ export default {
   joinAgain: 'Join again',
   notFound: 'We couldn’t find this spot',
   notFoundSub: 'It may be from another day, or the link is wrong.',
-  updatesLive: 'Updates by itself — no need to refresh',
+  updatesLive: 'Updates by itself, no need to refresh',
 
   // pin
   staffOnly: 'Staff only',
@@ -111,10 +111,10 @@ export default {
   // reception
   reception: 'Reception',
   waitingN: ({ n }) => `Waiting: ${n}`,
-  addWalkIn: 'Add walk-in',
-  callNext: 'Call next',
+  addWalkIn: 'Add a walk-in',
+  callNext: 'Call next customer',
   nowServing: 'In chair',
-  calledAgo: ({ token, n }) => `Called ${token} · ${n} min ago`,
+  calledAgo: ({ token, n }) => `Called ${token}, ${n} min ago`,
   noShow: 'No-show',
   noShowIn: ({ n }) => `No-show in ${n} min`,
   cancel: 'Cancel',
@@ -132,7 +132,7 @@ export default {
   confirmCancel: ({ token }) => `Cancel ${token}? They lose their place.`,
   addToQueue: 'Add to queue',
   walkInTitle: 'Add a walk-in',
-  callFailed: 'Could not call — someone else just changed the queue.',
+  callFailed: 'Could not call: someone else just changed the queue.',
   barbersOnDuty: 'Barbers',
 
   // barber
@@ -141,7 +141,7 @@ export default {
   current: 'Current customer',
   start: 'Start',
   done: 'Done',
-  waitingToArrive: 'Called — waiting for them to arrive',
+  waitingToArrive: 'Called, waiting for them to arrive',
   nextForYou: 'Next for you',
   servedToday: ({ n }) => `Served today: ${n}`,
   noOneWaitingForYou: 'No one waiting for you right now.',
@@ -154,7 +154,7 @@ export default {
   upNext: 'Up next',
   tvJoin: 'Join from your phone: scan the QR',
   tapSound: 'Tap anywhere to enable sound',
-  tvEmpty: 'No one waiting — walk right in!',
+  tvEmpty: 'No one waiting. Walk right in.',
   nowCalling: 'Now calling',
   goToBarber: ({ name }) => `please go to ${name}`,
 
@@ -204,7 +204,7 @@ export default {
   err_busy: 'This barber already has a customer',
   err_onBreak: 'This barber is on break',
   err_offDuty: 'This barber is not on duty',
-  err_tryAgain: 'The queue just changed — please try again',
+  err_tryAgain: 'The queue just changed. Please try again.',
   err_wrongStatus: 'This customer’s status already changed',
   err_noShowTooEarly: 'No-show is allowed 10 minutes after calling',
   err_barberBusy: 'Finish the current customer first',
@@ -246,7 +246,7 @@ export default {
   yourTicket: 'Your ticket',
   openTicket: 'Open my ticket',
   howTitle: 'How it works',
-  how1: 'Join from your phone — it takes 30 seconds.',
+  how1: 'Join from your phone. It takes 30 seconds.',
   how2: 'Watch your turn live. Wait at home, have a chai, run an errand.',
   how3: 'Come in when your phone says “Start coming”.',
   joinSub: ({ n }) => `Expected wait about ${n} min`,
@@ -270,4 +270,8 @@ export default {
   joinedAgo: ({ n }) => `${n} min ago`,
   colEst: 'Est. wait',
   liveShort: 'Updates live',
+  waitingWord: ({ n }) => (n === 1 ? 'person waiting' : 'people waiting'),
+  studentId: 'student ID',
+  ticketWaiting: 'Waiting for your turn',
+  progressLabel: 'Your place in the queue',
 };

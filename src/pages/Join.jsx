@@ -34,15 +34,15 @@ export default function Join() {
         {!state ? (
           <Loading />
         ) : !state.settings.onlineOpen ? (
-          <div className="card mt-6 px-6 py-10 text-center">
-            <p className="font-display text-2xl leading-snug">
+          <div className="panel mt-6 px-6 py-10 text-center">
+            <p className="display text-2xl leading-snug">
               {state.settings.reason === 'salonClosed'
                 ? t('salonClosedMsg', { open: fmtTime(state.settings.openTime) })
                 : state.settings.reason === 'closingSoon'
                   ? t('closingSoonMsg')
                   : t('onlineClosedMsg')}
             </p>
-            <Link to="/" className="btn-ghost mt-8">{t('backHome')}</Link>
+            <Link to="/" className="btn-outline mt-8">{t('backHome')}</Link>
           </div>
         ) : (
           <JoinForm state={state} serverNow={serverNow} onResult={onResult} toast={toast} />
@@ -53,7 +53,7 @@ export default function Join() {
         {existing && (
           <>
             <p className="mb-6 text-[17px] leading-relaxed">{t('alreadyInQueue', { token: `S-${existing.token}` })}</p>
-            <button className="btn-gold w-full" onClick={openExisting}>{t('seeMySpot')}</button>
+            <button className="btn-primary w-full" onClick={openExisting}>{t('seeMySpot')}</button>
           </>
         )}
       </Modal>

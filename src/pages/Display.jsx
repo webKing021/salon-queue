@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useLang, useNames } from '../i18n/index.jsx';
 import { useQueue, useTick } from '../lib/useQueue.js';
 import { STATUS, barberState, currentOf, spotEta, waitingList } from '../lib/queueRules.js';
-import { Avatar, Icon, LangToggle, Logo, OfflineBar, clockText } from '../components/ui.jsx';
+import { Avatar, Icon, LangToggle, OfflineBar, Pole, clockText } from '../components/ui.jsx';
 
 const FLASH_MS = 5000;
 
@@ -69,7 +69,7 @@ export default function Display() {
     setSoundOn(true);
   }
 
-  if (!state) return <div className="min-h-dvh bg-coal" />;
+  if (!state) return <div className="min-h-dvh bg-navy-deep" />;
 
   const now = serverNow();
   const onDuty = state.barbers.filter((b) => b.onDuty);
@@ -77,32 +77,31 @@ export default function Display() {
   const flashBarber = flashing && state.barbers.find((b) => b.id === flashing.barberId);
 
   return (
-    <main onClick={() => { enableSound(); wake(); }} onMouseMove={wake} className="flex h-dvh flex-col overflow-hidden bg-coal text-ivory">
+    <main onClick={() => { enableSound(); wake(); }} onMouseMove={wake} className="flex h-dvh flex-col overflow-hidden bg-navy-deep text-white">
       <OfflineBar offline={offline} />
-      <div className="pole" />
       <Link
         to="/staff"
-        className={`fixed top-4 left-1/2 z-50 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-full bg-paper px-5 text-[15px] font-bold text-ink shadow-xl transition-opacity ${
+        className={`fixed top-4 left-1/2 z-50 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-full bg-white px-5 text-[15px] font-bold text-ink shadow-xl transition-opacity ${
           showExit ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       >
         <Icon.Back width={18} height={18} /> {t('exitTv')}
       </Link>
-      <header className="flex items-center justify-between border-b border-line px-[3vw] py-[1.6vh]">
+      <header className="flex items-center justify-between border-b border-white/10 px-[3vw] py-[1.6vh]">
         <div className="flex items-center gap-4">
-          <Logo size={Math.round(Math.min(window.innerHeight * 0.06, 64))} />
-          <h1 className="font-display text-[clamp(28px,3.2vw,64px)] font-medium tracking-tight">{t('salonName')}</h1>
+          <Pole height={Math.round(Math.min(window.innerHeight * 0.08, 84))} width={Math.round(Math.min(window.innerHeight * 0.022, 22))} spinning />
+          <h1 className="display text-[clamp(28px,3.2vw,64px)] ">{t('salonName')}</h1>
         </div>
         <div className="flex items-center gap-6">
-          <LangToggle />
-          <p className="token text-[clamp(40px,4.4vw,88px)] text-gold">{clockText(now)}</p>
+          <LangToggle dark />
+          <p className="num text-[clamp(40px,4.4vw,88px)] text-white">{clockText(now)}</p>
         </div>
       </header>
 
       {flashing && (
-        <div className="animate-flash flex items-center justify-center gap-[2vw] px-[3vw] py-[1.8vh]">
+        <div className="flex items-center bg-red justify-center gap-[2vw] px-[3vw] py-[1.8vh]">
           <span className="text-[clamp(22px,2vw,40px)] font-semibold">{t('nowCalling')}</span>
-          <span className="token text-[clamp(72px,7vw,150px)] leading-none">S-{flashing.token}</span>
+          <span className="num text-[clamp(72px,7vw,150px)] leading-none">S-{flashing.token}</span>
           <span className="text-[clamp(22px,2vw,40px)] font-semibold">{t('goToBarber', { name: names.barber(flashBarber) })}</span>
         </div>
       )}
@@ -116,8 +115,8 @@ export default function Display() {
             return (
               <div
                 key={b.id}
-                className={`flex flex-1 items-center gap-[2vw] rounded-[2vw] border border-line px-[2.2vw] ${
-                  isFlash ? 'animate-flash' : 'bg-coal-deep'
+                className={`flex flex-1 items-center gap-[2vw] rounded-[2vw] border px-[2.2vw] ${
+                  isFlash ? 'animate-flash border-red' : 'border-white/10 bg-white/[0.04]'
                 } ${st === 'break' ? 'opacity-60' : ''}`}
               >
                 <Avatar barber={b} size={Math.round(Math.min(window.innerHeight * 0.11, 120))} />
@@ -132,11 +131,11 @@ export default function Display() {
                 <div className="text-right">
                   {cur ? (
                     <>
-                      <p className="text-[clamp(14px,1.1vw,24px)] font-semibold uppercase tracking-[0.2em] opacity-60 [:lang(gu)_&]:tracking-normal">{t('now')}</p>
-                      <p className={`token text-[clamp(80px,8vw,180px)] leading-none ${isFlash ? '' : 'text-gold'}`}>S-{cur.token}</p>
+                      <p className="text-[clamp(14px,1.1vw,24px)] font-semibold opacity-60">{t('now')}</p>
+                      <p className={`num text-[clamp(80px,8vw,180px)] leading-none ${isFlash ? '' : cur.status === STATUS.CALLED ? 'text-[#ff7a70]' : 'text-white'}`}>S-{cur.token}</p>
                     </>
                   ) : (
-                    <p className={`text-[clamp(28px,2.8vw,60px)] font-semibold ${st === 'free' ? 'text-mint' : 'text-mute'}`}>
+                    <p className={`text-[clamp(28px,2.8vw,60px)] font-semibold ${st === 'free' ? 'text-[#5fd39a]' : st === 'break' ? 'text-[#f2b544]' : 'text-white/45'}`}>
                       {t(`st_${st}`)}
                     </p>
                   )}
@@ -146,19 +145,19 @@ export default function Display() {
           })}
         </section>
 
-        <section className="flex min-h-0 flex-col rounded-[2vw] border border-line bg-coal-deep px-[2.2vw] py-[2.5vh]">
-          <h2 className="mb-[1.5vh] font-display text-[clamp(28px,2.6vw,56px)] text-gold">{t('upNext')}</h2>
+        <section className="flex min-h-0 flex-col rounded-[2vw] bg-white px-[2.2vw] py-[2.5vh] text-ink">
+          <h2 className="mb-[1.5vh] display text-[clamp(28px,2.6vw,56px)] text-navy">{t('upNext')}</h2>
           {upNext.length === 0 ? (
-            <p className="my-auto text-center font-display text-[clamp(26px,2.4vw,52px)] leading-snug text-mute">{t('tvEmpty')}</p>
+            <p className="my-auto text-center display text-[clamp(26px,2.4vw,52px)] leading-snug text-ink-3">{t('tvEmpty')}</p>
           ) : (
             <ol className="flex flex-1 flex-col divide-y divide-line">
               {upNext.map((s) => {
                 const eta = spotEta(s, state.spots, state.barbers, now);
                 return (
                   <li key={s.token} className="flex flex-1 items-center gap-[1.5vw]">
-                    <span className="token w-[30%] text-[clamp(56px,5vw,120px)] leading-none">S-{s.token}</span>
+                    <span className="num w-[30%] text-[clamp(56px,5vw,120px)] leading-none">S-{s.token}</span>
                     <span className="min-w-0 flex-1 truncate text-[clamp(22px,2vw,44px)]">{s.name}</span>
-                    <span className="text-[clamp(20px,1.7vw,38px)] text-mute">~{eta.wait || 5} {t('ringMin')}</span>
+                    <span className="text-[clamp(20px,1.7vw,38px)] text-ink-3">~{eta.wait || 5} {t('ringMin')}</span>
                   </li>
                 );
               })}
@@ -167,15 +166,15 @@ export default function Display() {
         </section>
       </div>
 
-      <footer className="flex items-center justify-between gap-6 border-t border-line px-[3vw] py-[1.5vh]">
+      <footer className="flex items-center justify-between gap-6 border-t border-white/10 px-[3vw] py-[1.5vh]">
         <p className="text-[clamp(20px,1.8vw,40px)] font-semibold">{t('tvJoin')}</p>
         <div className="flex items-center gap-5">
           {!soundOn && (
-            <span className="flex items-center gap-2 rounded-full border border-gold/50 px-4 py-2 text-[clamp(14px,1.1vw,22px)] text-gold-soft">
+            <span className="flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-[clamp(14px,1.1vw,22px)] text-white/80">
               <Icon.Sound /> {t('tapSound')}
             </span>
           )}
-          {qr && <img src={qr} alt="QR code to the join page" className="h-[11vh] w-[11vh] rounded-lg" />}
+          {qr && <img src={qr} alt="QR code to the join page" className="h-[11vh] w-[11vh] rounded-lg bg-white p-1" />}
         </div>
       </footer>
     </main>

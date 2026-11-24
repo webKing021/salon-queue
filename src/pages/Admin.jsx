@@ -53,7 +53,7 @@ function Settings() {
         <h1 className="text-[22px] font-bold">{t('admin')}</h1>
         {/* stats */}
         <section>
-          <h2 className="eyebrow mb-3">{t('statsToday')}</h2>
+          <h2 className="text-[18px] font-semibold text-ink mb-3">{t('statsToday')}</h2>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <Stat label={t('statServed')} value={stats.served} gold />
             <Stat label={t('statAvgWait')} value={stats.avgWait} />
@@ -65,30 +65,30 @@ function Settings() {
         <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
           <div className="space-y-6">
             {/* queue switch */}
-            <section className="card p-5">
-              <h2 className="eyebrow mb-4">{t('queueSwitch')}</h2>
+            <section className="panel p-5">
+              <h2 className="text-[18px] font-semibold text-ink mb-4">{t('queueSwitch')}</h2>
               <div className="flex items-center justify-between gap-4">
-                <p className={`text-lg font-semibold ${settings.queueOpen ? 'text-mint' : 'text-mute'}`}>
+                <p className={`text-lg font-semibold ${settings.queueOpen ? 'text-green' : 'text-ink-3'}`}>
                   {settings.queueOpen ? t('queueOpenLabel') : t('queueClosedLabel')}
                 </p>
                 <Toggle on={settings.queueOpen} label={t('queueSwitch')} onChange={(v) => run('setQueueOpen', { value: v })} />
               </div>
-              <p className="mt-2 text-[13px] text-mute">{t('walkInsStill')}</p>
+              <p className="mt-2 text-[13px] text-ink-3">{t('walkInsStill')}</p>
             </section>
 
             {/* hours */}
             <Hours settings={settings} t={t} onSave={(h) => run('setHours', h, t('saved'))} />
 
             {/* barbers */}
-            <section className="card p-5">
-              <h2 className="eyebrow mb-4">{t('barbersDuty')}</h2>
+            <section className="panel p-5">
+              <h2 className="text-[18px] font-semibold text-ink mb-4">{t('barbersDuty')}</h2>
               <ul className="space-y-3">
                 {barbers.map((b) => (
                   <li key={b.id} className="flex items-center gap-3">
                     <Avatar barber={b} size={40} />
                     <div className="flex-1">
                       <p className="font-semibold">{names.barber(b)}</p>
-                      <p className="text-[13px] text-mute">{t(`st_${barberState(b, spots)}`)}</p>
+                      <p className="text-[13px] text-ink-3">{t(`st_${barberState(b, spots)}`)}</p>
                     </div>
                     <Toggle on={b.onDuty} label={names.barber(b)} onChange={(v) => run('setDuty', { barberId: b.id, value: v })} />
                   </li>
@@ -98,10 +98,10 @@ function Settings() {
           </div>
 
           {/* services */}
-          <section className="card self-start p-5">
+          <section className="panel self-start p-5">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="eyebrow">{t('servicesList')}</h2>
-              <button className="btn-ghost min-h-10 text-sm" onClick={() => setEditing({})}>
+              <h2 className="text-[18px] font-semibold text-ink">{t('servicesList')}</h2>
+              <button className="btn-outline min-h-10 text-sm" onClick={() => setEditing({})}>
                 <Icon.Plus width={16} height={16} /> {t('addService')}
               </button>
             </div>
@@ -110,9 +110,9 @@ function Settings() {
                 <li key={s.id} className={`flex items-center gap-3 py-3 ${s.active ? '' : 'opacity-50'}`}>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">{s.nameEn}</p>
-                    <p className="truncate font-gu text-[14px] text-mute">{s.nameGu}</p>
+                    <p className="truncate font-gu text-[14px] text-ink-3">{s.nameGu}</p>
                   </div>
-                  <span className="w-16 text-right text-[14px] text-mute">{t('min', { n: s.minutes })}</span>
+                  <span className="w-16 text-right text-[14px] text-ink-3">{t('min', { n: s.minutes })}</span>
                   <span className="w-14 text-right font-semibold">₹{s.price}</span>
                   <button className="btn-quiet min-h-10 px-2 text-sm" onClick={() => setEditing(s)}>{t('edit')}</button>
                   <Toggle on={s.active} label={s.nameEn} onChange={(v) => run('toggleService', { id: s.id, value: v })} />
@@ -123,12 +123,12 @@ function Settings() {
         </div>
 
         {/* day controls */}
-        <section className="card flex flex-wrap items-center gap-4 p-5">
+        <section className="panel flex flex-wrap items-center gap-4 p-5">
           <div className="mr-auto">
-            <h2 className="eyebrow mb-1">{t('dangerZone')}</h2>
-            <p className="text-[13px] text-mute">{t('demoNote')}</p>
+            <h2 className="text-[18px] font-semibold text-ink mb-1">{t('dangerZone')}</h2>
+            <p className="text-[13px] text-ink-3">{t('demoNote')}</p>
           </div>
-          <button className="btn-ghost" onClick={() => run('addDemo', {}, (r) => `+${r.added}`)}>{t('demoData')}</button>
+          <button className="btn-outline" onClick={() => run('addDemo', {}, (r) => `+${r.added}`)}>{t('demoData')}</button>
           <button className="btn-danger" onClick={() => setAskReset(true)}>{t('resetDay')}</button>
         </section>
       </div>
@@ -159,9 +159,9 @@ function Settings() {
 
 function Stat({ label, value, gold }) {
   return (
-    <div className="card px-5 py-4">
-      <p className={`token text-[48px] ${gold ? 'text-gold' : ''}`}>{value}</p>
-      <p className="mt-1 text-[13px] text-mute">{label}</p>
+    <div className="panel px-5 py-4">
+      <p className={`num text-[48px] ${gold ? 'text-navy' : ''}`}>{value}</p>
+      <p className="mt-1 text-[13px] text-ink-3">{label}</p>
     </div>
   );
 }
@@ -175,8 +175,8 @@ function Hours({ settings, t, onSave }) {
   }, [settings.openTime, settings.closeTime]);
   const changed = open !== settings.openTime || close !== settings.closeTime;
   return (
-    <section className="card p-5">
-      <h2 className="eyebrow mb-4">{t('hours')}</h2>
+    <section className="panel p-5">
+      <h2 className="text-[18px] font-semibold text-ink mb-4">{t('hours')}</h2>
       <div className="grid grid-cols-2 gap-3">
         <label>
           <span className="label">{t('opens')}</span>
@@ -188,9 +188,9 @@ function Hours({ settings, t, onSave }) {
         </label>
       </div>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <p className="text-[13px] text-mute">{t('hoursNote')}</p>
+        <p className="text-[13px] text-ink-3">{t('hoursNote')}</p>
         {changed && (
-          <button className="btn-gold min-h-10 text-sm" onClick={() => onSave({ openTime: open, closeTime: close })}>
+          <button className="btn-primary min-h-10 text-sm" onClick={() => onSave({ openTime: open, closeTime: close })}>
             {t('save')}
           </button>
         )}
@@ -233,8 +233,8 @@ function ServiceEditor({ service, t, onClose, onSave }) {
           </label>
         </div>
         <div className="grid grid-cols-2 gap-3 pt-2">
-          <button type="button" className="btn-ghost" onClick={onClose}>{t('close')}</button>
-          <button type="submit" className="btn-gold">{t('save')}</button>
+          <button type="button" className="btn-outline" onClick={onClose}>{t('close')}</button>
+          <button type="submit" className="btn-primary">{t('save')}</button>
         </div>
       </form>
     </Modal>

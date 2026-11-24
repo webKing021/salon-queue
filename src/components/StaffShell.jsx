@@ -34,8 +34,7 @@ function Frame({ active, width, children }) {
   const { t } = useLang();
   return (
     <div className="min-h-dvh pb-24 md:pb-0">
-      <div className="pole" />
-      <header className="sticky top-0 z-30 border-b border-line bg-coal/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-line bg-page/92 backdrop-blur">
         <div className={`mx-auto flex items-center gap-4 px-4 py-2.5 md:px-6 ${width}`}>
           <Wordmark to="/staff" sub={t('staffArea')} />
           <nav className="ml-4 hidden items-center gap-1 md:flex" aria-label={t('staffArea')}>
@@ -45,7 +44,7 @@ function Frame({ active, width, children }) {
                 to={tab.to}
                 aria-current={active === tab.key ? 'page' : undefined}
                 className={`flex min-h-11 items-center gap-2 rounded-xl px-3.5 text-[15px] font-semibold transition-colors ${
-                  active === tab.key ? 'bg-gold/12 text-gold-soft' : 'text-mute hover:bg-white/5 hover:text-ivory'
+                  active === tab.key ? 'bg-navy text-white' : 'text-ink-2 hover:bg-sunk hover:text-ink'
                 }`}
               >
                 <tab.icon width={18} height={18} />
@@ -55,11 +54,11 @@ function Frame({ active, width, children }) {
           </nav>
           <div className="ml-auto flex items-center gap-1.5">
             <LangToggle />
-            <Link to="/" title={t('customerView')} aria-label={t('customerView')} className="hidden h-11 items-center gap-2 rounded-xl px-3 text-[14px] font-semibold text-mute hover:bg-white/5 hover:text-ivory sm:flex">
+            <Link to="/" title={t('customerView')} aria-label={t('customerView')} className="hidden h-11 items-center gap-2 rounded-xl px-3 text-[14px] font-semibold text-ink-2 hover:bg-sunk hover:text-ink sm:flex">
               <Icon.Home width={18} height={18} />
               <span className="hidden lg:inline">{t('customerView')}</span>
             </Link>
-            <button type="button" onClick={lockStaff} title={t('logout')} aria-label={t('logout')} className="grid h-11 w-11 place-items-center rounded-xl text-mute hover:bg-white/5 hover:text-ivory">
+            <button type="button" onClick={lockStaff} title={t('logout')} aria-label={t('logout')} className="grid h-11 w-11 place-items-center rounded-xl text-ink-2 hover:bg-sunk hover:text-ink">
               <Icon.Lock />
             </button>
           </div>
@@ -70,7 +69,7 @@ function Frame({ active, width, children }) {
 
       <nav
         aria-label={t('staffArea')}
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-line bg-coal-deep/97 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-line bg-surface/95 shadow-[0_-8px_24px_-12px_rgb(22_26_38/0.25)] pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
         {STAFF_TABS.map((tab) => (
           <Link
@@ -78,7 +77,7 @@ function Frame({ active, width, children }) {
             to={tab.to}
             aria-current={active === tab.key ? 'page' : undefined}
             className={`flex min-h-16 flex-col items-center justify-center gap-1 text-[12px] font-semibold ${
-              active === tab.key ? 'text-gold' : 'text-mute'
+              active === tab.key ? 'text-navy' : 'text-ink-3'
             }`}
           >
             <tab.icon width={22} height={22} />

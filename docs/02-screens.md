@@ -2,13 +2,17 @@
 
 Salon: **Royal Cuts Salon** · Open 10:00 AM – 9:00 PM
 Barbers: Ravi, Amit, Imran
-Theme: charcoal `#1F2937` background, gold `#D4A017` accent, rounded cards, white text.
+Theme: see "Look & navigation" below (v3: porcelain + barber-pole navy and red).
 Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sits in the top-right corner of every screen.
 
 ## Look & navigation (v2 — after the first build felt generic and hard to find your way around)
-- **Visual style:** charcoal + gold stay. Tokens look like an ivory **paper ticket** with a perforated
-  tear line. Numbers use a tall signage font (Big Shoulders Display), headings use Fraunces, text uses Manrope,
-  and Gujarati uses Hind Vadodara. A thin gold line runs along the top of every screen.
+- **Visual style (v3):** light porcelain page `#F3F4F1`, white surfaces, pole navy `#1E2A5A` for structure
+  and main buttons, pole red `#C8322B` only for "now" moments (It's your turn, Now calling, the called token).
+  Green = barber free, amber = on break / waiting long. One font family, **Anek** (Latin + Gujarati):
+  condensed extra-bold for token numbers, semi-expanded for the salon name, normal for text.
+  The memorable element is a **barber pole** that spins next to the salon name only while the salon is open,
+  and fills the waiting progress on the customer's ticket. TV uses a deep navy board with white tokens.
+  Sentence case everywhere, no all-caps labels.
 - **Two areas, never mixed:**
   - **Customer area** (`/`, `/join`, `/status/:id`): phone layout, back arrow top-left, language toggle top-right.
     Home is the hub; the customer never needs another menu.
@@ -47,7 +51,7 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 - **Your ticket** (only if this phone is in the queue): paper ticket with token, position and wait → opens My Status
 - **Queue right now** card: "6 people waiting" + "about 50 min", then **Now serving**: one row per barber
   with their current token, or Free (green) / On break (grey)
-- Big gold button **[ Join Queue ]** with "Expected wait about 50 min" under it → `/join`
+- Big navy button **[ Join the queue ]** with "Expected wait about 50 min" under it → `/join`
 - **How it works**: 3 short numbered lines
 - **Price list**: every active service with minutes and price (menu style)
 - Small link "Already in the queue? See my status" → opens saved status (if this phone has one)
@@ -69,11 +73,11 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 - Back arrow + title "Join the queue"
 - **Name** (required, 2–30 letters)
 - **Phone** (required, exactly 10 digits, starts with 6–9)
-- **Service cards** (multi-select, max 3): each card shows name, minutes, price; selected card has a gold border + tick
+- **Service cards** (multi-select, max 3): each card shows name, minutes, price; selected card turns navy with a tick
 - Sections are numbered **1 Your details · 2 Services · 3 Barber** so the order is obvious
 - **Barber picker** (list): "Any barber (fastest)" first, then one row per barber on duty with photo and **their own expected wait** ("~25 min"), so the customer can compare. A barber on break shows "On break" but can still be chosen.
 - **Live summary bar** (sticky at bottom): "Total 45 min · ₹230 · Expected wait ~35 min" — updates on every tap
-- **[ Confirm ]** gold button inside the summary bar → creates the spot and goes to `/status/:id`
+- **[ Confirm ]** navy button inside the summary bar → creates the spot and goes to `/status/:id`
 
 **Validation / errors:**
 - Phone not 10 digits → red text under the field "Enter a valid 10-digit mobile number"
@@ -89,14 +93,14 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 **Layout (phone, top to bottom):** the whole spot is shown as a paper ticket.
 - Token **S-14** very large
 - Position: "4th in line" (or "You're next!" when 1st)
-- Circular countdown ring: "about 35 min"; updates by itself, no refresh
+- Barber-pole progress next to the token: the pole fills up as the turn gets closer, with "about 35 min"; updates by itself, no refresh (v3: replaces the circular ring, the pole is the app's one signature element)
 - Details card: services, chosen barber, total price to pay at the salon
 - If chosen barber is on break → amber note "Ravi is on break"
 - **[ Cancel my spot ]** (outline button) → confirmation pop-up "Are you sure? You will lose your place." [Keep my spot] [Yes, cancel]
 
 **Special states:**
-- **2nd in line:** gold banner at top "Start coming to the salon"
-- **Called:** full-screen gold page, dark text: "It's your turn! Go to Ravi", gentle pulse animation, phone vibrates
+- **2nd in line:** navy banner at top "Start coming to the salon"
+- **Called:** full-screen pole-red page, white text: "It's your turn! Go to Ravi", gentle pulse animation, phone vibrates
 - **In chair:** "You are with Ravi — enjoy!"
 - **Done:** "Thank you! See you again" + button back to Home
 - **Cancelled / No-show:** grey card with the reason + button **[ Join again ]**
@@ -137,7 +141,7 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 - Barber name + toggle **On break / Available**
 - **Current customer card:** token, name, services, timer since Start (mm:ss)
 - Big buttons (full width, at least 56px tall):
-  - Customer is Called → **[ Start ]** (gold)
+  - Customer is Called → **[ Start ]** (navy)
   - Customer is In chair → **[ Done ]** (green)
   - No customer → **[ Call next ]**
 - "Next for you: S-15 Kunal (Haircut)"
@@ -158,7 +162,7 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 
 **Exit:** moving the mouse or tapping shows an "Exit TV mode" button for 4 seconds (→ `/staff`).
 
-**Behaviour:** when a token is called it flashes gold for 5 seconds and a short chime plays. (Browser needs one click on the screen to allow sound — show "Tap to enable sound" once.)
+**Behaviour:** when a token is called it flashes red for 5 seconds and a short chime plays. (Browser needs one click on the screen to allow sound — show "Tap to enable sound" once.)
 
 ---
 
@@ -178,6 +182,6 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 ---
 
 ## Staff PIN screen
-Shown before `/reception`, `/barber/:name` and `/admin`. 4-digit PIN pad, gold keys.
+Shown before `/reception`, `/barber/:name` and `/admin`. 4-digit PIN pad, large round keys.
 Wrong PIN → shake + "Wrong PIN". Correct PIN is remembered on that device for the day.
 Test PIN: **1234** (demo only — written in README).

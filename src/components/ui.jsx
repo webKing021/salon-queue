@@ -105,13 +105,13 @@ export function mmss(ms) {
 export const minsSince = (from, now) => Math.max(0, Math.floor((now - from) / 60000));
 
 // ---------------------------------------------------------------- language toggle (44px targets)
-export function LangToggle({ className = '', compact = false }) {
+export function LangToggle({ className = '', dark = false }) {
   const { lang, setLang, t } = useLang();
   return (
     <div
       role="group"
       aria-label={t('langLabel')}
-      className={`flex shrink-0 rounded-full border border-line-strong p-0.5 text-[13px] font-bold ${className}`}
+      className={`flex shrink-0 rounded-full p-1 text-[14px] font-semibold ${dark ? 'bg-white/10' : 'bg-sunk'} ${className}`}
     >
       {[
         ['en', 'EN'],
@@ -125,8 +125,14 @@ export function LangToggle({ className = '', compact = false }) {
             setLang(code);
           }}
           aria-pressed={lang === code}
-          className={`${compact ? 'min-h-9 min-w-10' : 'min-h-10 min-w-11'} rounded-full px-2.5 transition-colors ${
-            lang === code ? 'bg-gold text-gold-ink' : 'text-mute hover:text-ivory'
+          className={`min-h-10 min-w-11 rounded-full px-2.5 transition-colors ${
+            lang === code
+              ? dark
+                ? 'bg-white text-navy shadow-sm'
+                : 'bg-surface text-navy shadow-[0_1px_2px_rgb(22_26_38/0.15)]'
+              : dark
+                ? 'text-white/70 hover:text-white'
+                : 'text-ink-3 hover:text-ink'
           }`}
         >
           {label}
@@ -136,86 +142,91 @@ export function LangToggle({ className = '', compact = false }) {
   );
 }
 
-// ---------------------------------------------------------------- brand
-export function Logo({ size = 36 }) {
+// ---------------------------------------------------------------- the barber pole
+/**
+ * A barber pole. It spins only when `spinning` is true (salon open / customer waiting),
+ * like a real one outside a shop. `fill` (0..1) shows only part of the stripes, for progress.
+ */
+export function Pole({ height = 120, width = 18, spinning = false, fill = 1, className = '' }) {
+  const cap = Math.max(5, Math.round(width * 0.42));
   return (
-    <span
-      className="grid shrink-0 place-items-center rounded-full bg-gold text-gold-ink"
-      style={{ width: size, height: size }}
-      aria-hidden="true"
-    >
-      <Icon.Scissors width={size * 0.52} height={size * 0.52} strokeWidth={2} />
+    <span className={`inline-flex shrink-0 flex-col items-center ${className}`} style={{ height }} aria-hidden="true">
+      <span className="block rounded-t-full bg-navy" style={{ width: width + 6, height: cap }} />
+      <span className="relative block flex-1 overflow-hidden bg-surface ring-1 ring-navy/25" style={{ width }}>
+        <span
+          className={`pole-stripes absolute inset-x-0 bottom-0 block ${spinning ? 'animate-pole' : ''}`}
+          style={{ height: `${Math.max(0, Math.min(1, fill)) * 100}%` }}
+        />
+        <span className="absolute inset-y-0 left-[18%] block w-[22%] bg-white/45" />
+      </span>
+      <span className="block rounded-b-full bg-navy" style={{ width: width + 6, height: cap }} />
     </span>
   );
 }
 
-export function Wordmark({ to = '/', sub }) {
+// ---------------------------------------------------------------- brand
+export function Wordmark({ to = '/', sub, open = true }) {
   const { t } = useLang();
   return (
-    <Link to={to} className="flex min-w-0 items-center gap-2.5 text-ivory">
-      <Logo />
+    <Link to={to} className="flex min-w-0 items-center gap-2.5 text-ink">
+      <Pole height={34} width={9} spinning={open} />
       <span className="min-w-0 leading-none">
-        <span className="block truncate font-display text-[19px] font-medium tracking-tight">{t('salonShort')}</span>
-        {sub && <span className="mt-1 block truncate text-[12px] font-semibold text-mute">{sub}</span>}
+        <span className="display block truncate text-[19px]">{t('salonShort')}</span>
+        {sub && <span className="mt-1 block truncate text-[13px] font-medium text-ink-3">{sub}</span>}
       </span>
     </Link>
   );
 }
 
 /** Wrapper for every customer (phone) screen. */
-export function CustomerShell({ back, title, right, children }) {
+export function CustomerShell({ back, title, right, open = true, width = "max-w-[520px]", children }) {
   const { t } = useLang();
   return (
-    <>
-      <div className="pole" />
-      <main className="mx-auto flex min-h-[calc(100dvh-4px)] max-w-[480px] flex-col px-5">
-        <header className="sticky top-0 z-20 -mx-5 flex items-center justify-between gap-3 bg-coal/92 px-5 py-3 backdrop-blur">
-          {back ? (
-            <div className="flex min-w-0 items-center gap-1">
-              <Link to={back} aria-label={t('back')} className="-ml-2.5 grid h-11 w-11 shrink-0 place-items-center rounded-full text-mute hover:bg-white/5 hover:text-ivory">
-                <Icon.Back />
-              </Link>
-              <h1 className="truncate text-[17px] font-bold">{title}</h1>
-            </div>
-          ) : (
-            <Wordmark />
-          )}
-          <div className="flex items-center gap-2">
-            {right}
-            <LangToggle />
+    <main className={`mx-auto flex min-h-dvh w-full flex-col px-5 md:px-8 ${width}`}>
+      <header className="sticky top-0 z-20 -mx-5 flex min-h-16 md:-mx-8 md:px-8 items-center justify-between gap-3 border-b border-line/70 bg-page/90 px-5 py-2.5 backdrop-blur-md">
+        {back ? (
+          <div className="flex min-w-0 items-center gap-1">
+            <Link to={back} aria-label={t('back')} className="-ml-2.5 grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-2 hover:bg-sunk hover:text-ink">
+              <Icon.Back />
+            </Link>
+            <h1 className="truncate text-[18px] font-semibold">{title}</h1>
           </div>
-        </header>
-        {children}
-      </main>
-    </>
+        ) : (
+          <Wordmark open={open} />
+        )}
+        <div className="flex items-center gap-2">
+          {right}
+          <LangToggle />
+        </div>
+      </header>
+      {children}
+    </main>
   );
 }
 
 // ---------------------------------------------------------------- barbers
 const AVATAR_TONES = {
-  ravi: ['#9a6644', '#6a4129'],
-  amit: ['#447a78', '#2a4d4c'],
-  imran: ['#7a5580', '#4b3452'],
+  ravi: ['#b0674a', '#7d3f2a'],
+  amit: ['#2f7d77', '#1c514d'],
+  imran: ['#6d5a9c', '#47396d'],
 };
 export function Avatar({ barber, size = 44, ring = false }) {
-  const [a, b] = AVATAR_TONES[barber?.id] || ['#5d6880', '#394259'];
+  const [a, b] = AVATAR_TONES[barber?.id] || ['#6b7590', '#454e68'];
   return (
     <span
-      className={`grid shrink-0 place-items-center rounded-full font-display text-ivory ${
-        ring ? 'ring-2 ring-gold ring-offset-2 ring-offset-coal' : ''
-      }`}
-      style={{ width: size, height: size, fontSize: size * 0.44, background: `linear-gradient(140deg, ${a}, ${b})` }}
+      className={`grid shrink-0 place-items-center rounded-full font-semibold text-white ${ring ? 'ring-[3px] ring-red ring-offset-2 ring-offset-surface' : ''}`}
+      style={{ width: size, height: size, fontSize: size * 0.42, background: `linear-gradient(150deg, ${a}, ${b})` }}
       aria-hidden="true"
     >
-      {barber ? barber.name[0] : '★'}
+      {barber ? barber.name[0] : '?'}
     </span>
   );
 }
 
-export const DOT = { free: 'bg-mint', busy: 'bg-gold', break: 'bg-faint', off: 'bg-faint/40' };
-export const STATE_TEXT = { free: 'text-mint', busy: 'text-gold-soft', break: 'text-mute', off: 'text-faint' };
+export const DOT = { free: 'bg-green', busy: 'bg-navy', break: 'bg-amber', off: 'bg-ink-3/50' };
+export const STATE_TEXT = { free: 'text-green', busy: 'text-navy', break: 'text-amber', off: 'text-ink-3' };
 export function Dot({ state, className = '' }) {
-  return <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${DOT[state]} ${className}`} aria-hidden="true" />;
+  return <span className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${DOT[state]} ${className}`} aria-hidden="true" />;
 }
 
 // ---------------------------------------------------------------- overlays
@@ -228,20 +239,20 @@ export function Modal({ open, onClose, title, children, wide = false }) {
   }, [open, onClose]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/65 sm:items-center sm:p-6" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-navy-deep/45 backdrop-blur-[2px] sm:items-center sm:p-6" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
-        className={`animate-rise max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl border border-line bg-coal p-6 sm:rounded-3xl ${
+        className={`animate-rise max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl bg-surface p-6 shadow-2xl sm:rounded-3xl ${
           wide ? 'sm:max-w-xl' : 'sm:max-w-sm'
         }`}
       >
         {title && (
           <div className="mb-5 flex items-center justify-between gap-3">
-            <h2 className="font-display text-[22px] font-medium">{title}</h2>
-            <button type="button" onClick={onClose} aria-label="Close" className="-mr-2 grid h-11 w-11 place-items-center rounded-full text-mute hover:bg-white/5 hover:text-ivory">
+            <h2 className="display text-[24px]">{title}</h2>
+            <button type="button" onClick={onClose} aria-label="Close" className="-mr-2 grid h-11 w-11 place-items-center rounded-full text-ink-3 hover:bg-sunk hover:text-ink">
               <Icon.Plus className="rotate-45" />
             </button>
           </div>
@@ -255,12 +266,12 @@ export function Modal({ open, onClose, title, children, wide = false }) {
 export function Confirm({ open, text, yes, no, onYes, onNo, danger = true }) {
   return (
     <Modal open={open} onClose={onNo}>
-      <p className="mb-6 text-[17px] leading-relaxed">{text}</p>
+      <p className="mb-6 text-[18px] leading-relaxed">{text}</p>
       <div className="grid grid-cols-2 gap-3">
-        <button className="btn-ghost" onClick={onNo} autoFocus>
+        <button className="btn-outline" onClick={onNo} autoFocus>
           {no}
         </button>
-        <button className={danger ? 'btn bg-rose text-[#2a0d0d] hover:brightness-110' : 'btn-gold'} onClick={onYes}>
+        <button className={danger ? 'btn-red' : 'btn-primary'} onClick={onYes}>
           {yes}
         </button>
       </div>
@@ -280,7 +291,7 @@ export function useToast() {
     <div
       key={msg.key}
       role="status"
-      className="animate-rise fixed inset-x-0 bottom-28 z-[60] mx-auto w-fit max-w-[90vw] rounded-full bg-paper px-5 py-3 text-center text-[15px] font-semibold text-ink shadow-2xl shadow-black/50"
+      className="animate-rise fixed inset-x-0 bottom-28 z-[60] mx-auto w-fit max-w-[90vw] rounded-full bg-navy px-5 py-3 text-center text-[15px] font-semibold text-white shadow-xl shadow-navy/30"
     >
       {msg.text}
     </div>
@@ -292,7 +303,7 @@ export function OfflineBar({ offline }) {
   const { t } = useLang();
   if (!offline) return null;
   return (
-    <div className="fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-2 bg-amber px-4 py-2 text-sm font-semibold text-[#2b1a03]">
+    <div className="fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-2 bg-amber px-4 py-2 text-sm font-semibold text-white">
       <Icon.Wifi /> {t('offline')}
     </div>
   );
@@ -301,16 +312,16 @@ export function OfflineBar({ offline }) {
 export function Loading() {
   const { t } = useLang();
   return (
-    <div className="grid min-h-[60dvh] place-items-center text-mute">
+    <div className="grid min-h-[60dvh] place-items-center text-ink-3">
       <div className="flex items-center gap-3">
-        <span className="h-4 w-4 animate-spin rounded-full border-2 border-gold border-t-transparent" />
+        <Pole height={36} width={10} spinning />
         {t('loading')}
       </div>
     </div>
   );
 }
 
-/** Switch styled as a pill (44px tall hit area). */
+/** Switch (44px tall hit area). */
 export function Toggle({ on, onChange, label, disabled }) {
   return (
     <button
@@ -322,22 +333,22 @@ export function Toggle({ on, onChange, label, disabled }) {
       onClick={() => onChange(!on)}
       className="grid h-11 w-16 shrink-0 place-items-center disabled:opacity-40"
     >
-      <span className={`relative block h-8 w-14 rounded-full transition-colors ${on ? 'bg-gold' : 'border border-line-strong bg-coal-deep'}`}>
-        <span className={`absolute top-1 h-6 w-6 rounded-full transition-all ${on ? 'left-7 bg-gold-ink' : 'left-1 bg-mute'}`} />
+      <span className={`relative block h-8 w-14 rounded-full transition-colors ${on ? 'bg-navy' : 'bg-line-strong'}`}>
+        <span className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-all ${on ? 'left-7' : 'left-1'}`} />
       </span>
     </button>
   );
 }
 
-/** Section heading used inside pages. */
+/** Section heading. `n` only for real sequences (the Join steps). */
 export function SectionTitle({ children, aside, n }) {
   return (
     <div className="mb-3 flex items-baseline justify-between gap-3">
-      <h2 className="flex items-baseline gap-2.5 text-[17px] font-bold">
-        {n && <span className="token text-[22px] text-gold">{n}</span>}
+      <h2 className="flex items-baseline gap-2 text-[19px] font-semibold">
+        {n && <span className="num text-[24px] text-red">{n}</span>}
         {children}
       </h2>
-      {aside && <span className="text-[13px] text-mute">{aside}</span>}
+      {aside && <span className="text-[14px] text-ink-3">{aside}</span>}
     </div>
   );
 }
