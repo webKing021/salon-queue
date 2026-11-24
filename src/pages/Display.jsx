@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useLang, useNames } from '../i18n/index.jsx';
 import { useQueue, useTick } from '../lib/useQueue.js';
 import { STATUS, barberState, currentOf, spotEta, waitingList } from '../lib/queueRules.js';
-import { Avatar, Icon, LangToggle, OfflineBar, Pole, clockText } from '../components/ui.jsx';
+import { Avatar, Icon, LangToggle, OfflineBar, Pole, clockText, fmtTime } from '../components/ui.jsx';
 
 const FLASH_MS = 5000;
 
@@ -77,7 +77,7 @@ export default function Display() {
   const flashBarber = flashing && state.barbers.find((b) => b.id === flashing.barberId);
 
   return (
-    <main onClick={() => { enableSound(); wake(); }} onMouseMove={wake} className="flex h-dvh flex-col overflow-hidden bg-navy-deep text-white">
+    <main onClick={() => { enableSound(); wake(); }} onMouseMove={wake} className="flex min-h-dvh flex-col bg-navy-deep text-white md:h-dvh md:overflow-hidden">
       <OfflineBar offline={offline} />
       <Link
         to="/staff"
@@ -89,7 +89,7 @@ export default function Display() {
       </Link>
       <header className="flex items-center justify-between border-b border-white/10 px-[3vw] py-[1.6vh]">
         <div className="flex items-center gap-4">
-          <Pole height={Math.round(Math.min(window.innerHeight * 0.08, 84))} width={Math.round(Math.min(window.innerHeight * 0.022, 22))} spinning />
+          <Pole height={Math.round(Math.min(window.innerHeight * 0.08, 84))} width={Math.round(Math.min(window.innerHeight * 0.022, 22))} spinning={state.settings.isOpen} />
           <h1 className="display text-[clamp(28px,3.2vw,64px)] ">{t('salonName')}</h1>
         </div>
         <div className="flex items-center gap-6">
@@ -106,7 +106,7 @@ export default function Display() {
         </div>
       )}
 
-      <div className="grid min-h-0 flex-1 grid-cols-[3fr_2fr] gap-[2.5vw] px-[3vw] py-[3vh]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 md:grid-cols-[3fr_2fr] md:gap-[2.5vw] px-[3vw] py-[3vh]">
         <section className="flex min-h-0 flex-col gap-[2vh]">
           {onDuty.map((b) => {
             const st = barberState(b, state.spots);
@@ -115,7 +115,7 @@ export default function Display() {
             return (
               <div
                 key={b.id}
-                className={`flex flex-1 items-center gap-[2vw] rounded-[2vw] border px-[2.2vw] ${
+                className={`flex min-h-[112px] flex-1 items-center gap-4 rounded-2xl border px-4 md:min-h-0 md:gap-[2vw] md:rounded-[2vw] md:px-[2.2vw] ${
                   isFlash ? 'animate-flash border-red' : 'border-white/10 bg-white/[0.04]'
                 } ${st === 'break' ? 'opacity-60' : ''}`}
               >
@@ -145,10 +145,10 @@ export default function Display() {
           })}
         </section>
 
-        <section className="flex min-h-0 flex-col rounded-[2vw] bg-white px-[2.2vw] py-[2.5vh] text-ink">
+        <section className="flex min-h-0 flex-col rounded-2xl bg-white px-5 py-4 text-ink md:rounded-[2vw] md:px-[2.2vw] md:py-[2.5vh]">
           <h2 className="mb-[1.5vh] display text-[clamp(28px,2.6vw,56px)] text-navy">{t('upNext')}</h2>
           {upNext.length === 0 ? (
-            <p className="my-auto text-center display text-[clamp(26px,2.4vw,52px)] leading-snug text-ink-3">{t('tvEmpty')}</p>
+            <p className="my-auto text-center display text-[clamp(26px,2.4vw,52px)] leading-snug text-ink-3">{state.settings.isOpen ? t('tvEmpty') : t('closedBoard', { time: fmtTime(state.settings.openTime) })}</p>
           ) : (
             <ol className="flex flex-1 flex-col divide-y divide-line">
               {upNext.map((s) => {
@@ -166,11 +166,11 @@ export default function Display() {
         </section>
       </div>
 
-      <footer className="flex items-center justify-between gap-6 border-t border-white/10 px-[3vw] py-[1.5vh]">
+      <footer className="flex flex-wrap items-center justify-between gap-4 md:gap-6 border-t border-white/10 px-[3vw] py-[1.5vh]">
         <p className="text-[clamp(20px,1.8vw,40px)] font-semibold">{t('tvJoin')}</p>
         <div className="flex items-center gap-5">
           {!soundOn && (
-            <span className="flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-[clamp(14px,1.1vw,22px)] text-white/80">
+            <span className="hidden items-center gap-2 rounded-full border border-white/30 md:flex px-4 py-2 text-[clamp(14px,1.1vw,22px)] text-white/80">
               <Icon.Sound /> {t('tapSound')}
             </span>
           )}

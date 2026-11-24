@@ -23,6 +23,22 @@ Every label comes from the EN/GU language file. A small `EN | ગુ` toggle sit
 - **One way in for staff:** a clear **[ Staff ]** button in the Home top bar → `/staff`.
 - All tap targets at least 44px.
 
+## Usability review (v3.1, walked through as a first-time customer and as staff)
+- **Home:** the big number says "N people waiting" and the line under it says "A new customer waits about X min"
+  (before, "about 25 min" next to a ticket saying 15 min looked like a contradiction).
+  When the salon is closed and empty, the live board is hidden; only "Closed now, opens at…" shows
+  (before, it said "Walk right in" with every barber "Free" while closed).
+  A finished/cancelled ticket is forgotten on this phone, so Home no longer offers "See my status" for an old visit.
+- **Join:** if this phone already has an active ticket, the page shows that ticket and an "Open my ticket" button
+  instead of the form (before, the customer filled everything and was only told on Confirm).
+- **My Status:** wait is shown as minutes **and** a clock time ("around 4:24 PM"). The pole fills by people ahead
+  (3 ahead = 1/4, 1 ahead = 1/2, next = full), so it always moves when the queue moves.
+  In chair: shows the services and "Pay ₹X at the counter when you're done".
+- **Reception:** confirm pop-ups name the action ("Cancel spot" / "Mark no-show" vs "Keep") instead of Yes/No.
+  The walk-in form says "Customer name", not "Your name". "New walk-in: no wait" instead of "~0 min".
+- **TV:** stacks into one column on narrow screens; says the salon is closed (and the pole stops) outside hours.
+- **404:** says "This page doesn't exist." with a Home button.
+
 ## Staff hub (`/staff`)
 **Who:** any staff member picking up a device. PIN first.
 - Title "Which screen is this device?"

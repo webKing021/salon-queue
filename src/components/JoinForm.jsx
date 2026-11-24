@@ -89,10 +89,10 @@ export default function JoinForm({ state, serverNow, walkIn = false, variant = '
   return (
     <form onSubmit={submit} noValidate className={variant === 'page' ? 'pb-36' : ''}>
       <section>
-        <SectionTitle n={walkIn ? null : '1'}>{t('stepDetails')}</SectionTitle>
+        <SectionTitle n={walkIn ? null : '1'}>{walkIn ? t('customerDetails') : t('stepDetails')}</SectionTitle>
         <div className="space-y-4">
           <div>
-            <label className="label" htmlFor="jf-name">{t('yourName')}</label>
+            <label className="label" htmlFor="jf-name">{walkIn ? t('customerName') : t('yourName')}</label>
             <input
               id="jf-name"
               ref={nameRef}

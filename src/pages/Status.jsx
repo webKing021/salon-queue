@@ -4,7 +4,7 @@ import { useLang, useNames } from '../i18n/index.jsx';
 import { useQueue } from '../lib/useQueue.js';
 import { act, forgetMySpot, getMySpot } from '../lib/api.js';
 import { STATUS, spotEta } from '../lib/queueRules.js';
-import { Avatar, Confirm, CustomerShell, Icon, LangToggle, Loading, OfflineBar, Pole, useToast } from '../components/ui.jsx';
+import { Avatar, Confirm, CustomerShell, Icon, LangToggle, Loading, OfflineBar, Pole, clockText, useToast } from '../components/ui.jsx';
 
 export default function Status() {
   const { id } = useParams();
@@ -14,7 +14,6 @@ export default function Status() {
   const [asking, setAsking] = useState(false);
   const [toastNode, toast] = useToast();
   const lastStatus = useRef(null);
-  const startWait = useRef(0);
   const mine = state?.mine;
 
   // Vibrate when the customer is called.
@@ -74,7 +73,13 @@ export default function Status() {
   }
 
   if (mine.status === STATUS.IN_CHAIR) {
-    return shell(<Message token={token} title={t('inChair', { name: names.barber(barberOf(mine.barber)) })} />);
+    return shell(
+      <Message
+        token={token}
+        title={t('inChair', { name: names.barber(barberOf(mine.barber)) })}
+        sub={`${mine.services.map((s) => names.service(s)).join(', ')}. ${t('inChairPay', { price: mine.totalPrice })}`}
+      />,
+    );
   }
 
   if (mine.status === STATUS.DONE) {
@@ -95,11 +100,10 @@ export default function Status() {
 
   // Waiting
   const eta = spotEta(mine, state.spots, state.barbers, serverNow());
-  if (!startWait.current) startWait.current = Math.max(eta.wait, 5);
-  startWait.current = Math.max(startWait.current, eta.wait);
   const first = eta.position === 1;
-  // The pole fills up as the customer's turn gets closer.
-  const progress = first ? 1 : Math.max(0.2, 1 - eta.wait / startWait.current);
+  // The pole fills up as people ahead are served: 3 ahead = 1/4 full, 1 ahead = 1/2, next = full.
+  const progress = 1 / (eta.ahead + 1);
+  const readyAt = clockText(serverNow() + eta.wait * 60000);
   const pref = barberOf(mine.prefBarber);
 
   async function cancel() {
@@ -133,9 +137,12 @@ export default function Status() {
             {!first && <p className="text-[16px] text-ink-3">{t('aheadOfYou', { n: eta.ahead })}</p>}
           </div>
           {!(first && eta.wait === 0) && (
-            <p className="text-[18px] text-ink-2">
-              {t('ringAbout')} <span className="num text-[44px] text-ink">{eta.wait}</span> {t('ringMin')}
-            </p>
+            <div>
+              <p className="text-[18px] text-ink-2">
+                {t('ringAbout')} <span className="num text-[44px] text-ink">{eta.wait}</span> {t('ringMin')}
+              </p>
+              <p className="text-[15px] text-ink-3">{t('aroundTime', { time: readyAt })}</p>
+            </div>
           )}
         </div>
       </section>

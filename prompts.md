@@ -132,6 +132,25 @@ scrolling; 13/13 unit tests and the 28-check script still pass.
 
 ---
 
+### 9. Final usability review as a senior developer and as a customer
+> Look at the whole site one final time like a senior developer with 25+ years of experience, and also as a
+> normal customer. Is anything confusing, hard to use or missing? Question yourself, and fix what's off.
+
+**What the agent did:** it scripted a real walk-through on a phone-sized browser (first visit, form errors,
+joining, coming back, queue moving, being called, in chair, done, salon closed, staff PIN, reception, walk-in,
+barber phone, TV on a small screen, a wrong URL) and screenshotted every step. Problems it found and fixed:
+- After a finished visit, Home still said "Already in the queue? See my status".
+- While closed, Home said "No one waiting. Walk right in." with all barbers "Free".
+- Home's "about 25 min" sat next to a ticket saying "about 15 min" with no label saying whose wait it was.
+- Opening Join with a ticket already on the phone only said so after filling the whole form.
+- The ticket's pole barely moved when people ahead were called (it followed minutes, not people).
+- No clock time for the wait; the walk-in form said "Your name" to the receptionist; Yes/No confirm buttons;
+  "~0 min"; the TV overflowed on a phone; the 404 page had no message.
+`docs/02-screens.md` got a "Usability review" section first, then the code. 13/13 unit tests and the
+28-check script still pass.
+
+---
+
 ## Prompts I'll use if something breaks (from the guide)
 - **Bug:** "On `<screen>`, I did `<action>`, and `<what happened>`. Expected: `<what should happen>`. Explain the cause first, then fix it."
 - **Verify:** "Go through the test checklist in `docs/03-flows-rules.md`. For each item say pass/fail and how you checked it."

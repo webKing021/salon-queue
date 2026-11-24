@@ -77,7 +77,7 @@ function Dashboard() {
         <span className="num text-[26px] text-ink-3">{clockText(now)}</span>
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-sunk px-3 py-1.5 text-[13px] font-bold">{t('waitingN', { n: waiting.length })}</span>
-          <span className="rounded-full bg-sunk px-3 py-1.5 text-[13px] font-semibold text-ink-3">{t('newWalkInWait', { n: newWait })}</span>
+          <span className="rounded-full bg-sunk px-3 py-1.5 text-[13px] font-semibold text-ink-3">{newWait === 0 ? t('newWalkInNoWait') : t('newWalkInWait', { n: newWait })}</span>
           <Link
             to="/admin"
             className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold ${
@@ -174,8 +174,8 @@ function Dashboard() {
             ? t('confirmCancel', { token: `S-${confirm.spot.token}` })
             : t('confirmNoShow', { token: `S-${confirm.spot.token}` }))
         }
-        no={t('no')}
-        yes={t('yes')}
+        no={t('keepIt')}
+        yes={confirm?.kind === 'noShow' ? t('yesNoShow') : t('yesCancelSpot')}
         onNo={() => setConfirm(null)}
         onYes={() => {
           const c = confirm;

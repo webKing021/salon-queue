@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLang } from '../i18n/index.jsx';
 import { useQueue } from '../lib/useQueue.js';
-import { saveMySpot } from '../lib/api.js';
+import { getMySpot, saveMySpot } from '../lib/api.js';
+import { isActive } from '../lib/queueRules.js';
 import JoinForm from '../components/JoinForm.jsx';
 import { CustomerShell, Loading, Modal, OfflineBar, fmtTime, useToast } from '../components/ui.jsx';
 
 export default function Join() {
   const { t } = useLang();
   const navigate = useNavigate();
-  const { state, offline, serverNow } = useQueue();
+  const { state, offline, serverNow } = useQueue({ spotId: getMySpot() });
+  const mine = state?.mine && isActive(state.mine) ? state.mine : null;
   const [toastNode, toast] = useToast();
   const [existing, setExisting] = useState(null);
 
@@ -43,6 +45,13 @@ export default function Join() {
                   : t('onlineClosedMsg')}
             </p>
             <Link to="/" className="btn-outline mt-8">{t('backHome')}</Link>
+          </div>
+        ) : mine ? (
+          <div className="panel mt-6 px-6 py-10 text-center">
+            <p className="num text-[80px] text-navy">S-{mine.token}</p>
+            <p className="display mt-4 text-[24px] leading-tight">{t('haveTicketTitle', { token: `S-${mine.token}` })}</p>
+            <p className="mt-3 text-ink-3">{t('haveTicketSub')}</p>
+            <Link to={`/status/${mine.id}`} className="btn-primary mt-8 w-full">{t('openTicket')}</Link>
           </div>
         ) : (
           <JoinForm state={state} serverNow={serverNow} onResult={onResult} toast={toast} />

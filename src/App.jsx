@@ -32,6 +32,7 @@ function NotFound() {
     <main className="grid min-h-dvh place-items-center px-6 text-center">
       <div>
         <p className="num text-7xl text-navy">404</p>
+        <p className="mt-3 text-[18px] text-ink-2">{t('notFoundPage')}</p>
         <Link to="/" className="btn-outline mt-6">{t('backHome')}</Link>
       </div>
     </main>
